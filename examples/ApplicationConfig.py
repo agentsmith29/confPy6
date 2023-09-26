@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 from src import confighandler as cfg

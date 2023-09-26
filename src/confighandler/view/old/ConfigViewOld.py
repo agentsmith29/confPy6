@@ -4,8 +4,8 @@ import sys
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QTreeView, QPushButton
 
-from ConfigHandler.controller.VAutomatorConfig import VAutomatorConfig
-from ConfigHandler.controller.GenericConfig import GenericConfig
+from confighandler.controller.VAutomatorConfig import VAutomatorConfig
+from confighandler.controller.GenericConfig import GenericConfig
 
 
 class ConfigViewOld(QWidget):

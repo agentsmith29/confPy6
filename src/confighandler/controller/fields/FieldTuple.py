@@ -1,5 +1,5 @@
-from src.confighandler.controller.Field import Field
-from src.confighandler.view.fields.FieldViewTuple import FieldViewTuple
+from confighandler.controller.Field import Field
+from confighandler.view.fields.FieldViewTuple import FieldViewTuple
 
 
 class FieldTuple(Field):

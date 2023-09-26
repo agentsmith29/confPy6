@@ -3,8 +3,8 @@ import re
 from pathlib import Path
 from typing import Generic, T, TypeVar
 
-from src.confighandler.controller.CSignal import CSignal
-from src.confighandler.view.FieldView import FieldView
+from confighandler.controller.CSignal import CSignal
+from confighandler.view.FieldView import FieldView
 
 
 class FieldData(object):
@@ -36,22 +36,22 @@ class Field(Generic[T]):
     def __new__(cls, value, friendly_name: str = None, description: str = None):
         # <print(f"Field {cls.__name__} created with value {value} of type {type(value)}")
         if isinstance(value, str):
-            from src.confighandler.controller.fields.FieldString import FieldString
+            from src import FieldString
             return super().__new__(FieldString)
         elif isinstance(value, int):
-            from src.confighandler.controller.fields.FieldInt import FieldInt
+            from src import FieldInt
             return super().__new__(FieldInt)
         elif isinstance(value, float):
-            from src.confighandler.controller.fields.FieldFloat import FieldFloat
+            from src import FieldFloat
             return super().__new__(FieldFloat)
         elif isinstance(value, Path):
-            from src.confighandler.controller.fields.FieldPath import FieldPath
+            from src import FieldPath
             return super().__new__(FieldPath)
         elif isinstance(value, tuple):
-            from src.confighandler.controller.fields.FieldTuple import FieldTuple
+            from src import FieldTuple
             return super().__new__(FieldTuple)
         elif isinstance(value, list):
-            from src.confighandler.controller.fields.FieldList import FieldList
+            from src import FieldList
             return super().__new__(FieldList)
 
     def serialize(self):

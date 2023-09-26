@@ -1,8 +1,6 @@
 import pathlib
 from pathlib import Path
-
-from src.confighandler.controller.Field import Field
-from src.confighandler.view.fields.FieldViewPath import FieldViewPath
+from confighandler.controller.Field import Field
 
 
 class FieldPath(Field):

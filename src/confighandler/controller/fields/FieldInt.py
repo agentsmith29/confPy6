@@ -1,5 +1,5 @@
-from src.confighandler.controller.Field import Field
-from src.confighandler.view.fields.FieldViewInt import FieldViewInt
+from Confighandler.controller.Field import Field
+from confighandler.view.fields.FieldViewInt import FieldViewInt
 
 
 class FieldInt(Field):

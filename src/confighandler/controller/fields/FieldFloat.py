@@ -1,5 +1,5 @@
-from src.confighandler.controller.Field import Field
-from src.confighandler.view.fields.FieldViewFloat import FieldViewFloat
+from confighandler.controller.Field import Field
+from confighandler.view.fields.FieldViewFloat import FieldViewFloat
 
 
 class FieldFloat(Field):

@@ -1,2 +1,2 @@
-from .controller.Field import Field
-from .controller.ConfigNode import ConfigNode
+from controller import Field
+from controller import ConfigNode

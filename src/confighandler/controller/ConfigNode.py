@@ -3,9 +3,9 @@ import logging
 
 import yaml
 
-from src.confighandler.controller.CSignal import CSignal
-from src.confighandler.controller.Field import Field
-from src.confighandler.view.ConfigView import ConfigView
+from confighandler.controller.CSignal import CSignal
+from confighandler.controller.Field import Field
+from confighandler.view.ConfigView import ConfigView
 
 
 class ConfigNode(object):
