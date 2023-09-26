@@ -1,4 +1,4 @@
-from src import confighandler as cfg
+import confighandler as cfg
 
 
 class LaserConfig(cfg.ConfigNode):

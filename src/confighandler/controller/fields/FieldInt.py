@@ -1,4 +1,4 @@
-from Confighandler.controller.Field import Field
+from confighandler.controller.Field import Field
 from confighandler.view.fields.FieldViewInt import FieldViewInt
 
 

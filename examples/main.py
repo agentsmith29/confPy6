@@ -5,7 +5,7 @@ from PySide6 import QtWidgets
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTreeWidget
 from rich.logging import RichHandler
 
-from examples.ApplicationConfig import ApplicationConfig
+from ApplicationConfig import ApplicationConfig
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

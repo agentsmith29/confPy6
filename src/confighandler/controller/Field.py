@@ -7,6 +7,8 @@ from confighandler.controller.CSignal import CSignal
 from confighandler.view.FieldView import FieldView
 
 
+
+
 class FieldData(object):
     def __init__(self, name: str, value, friendly_name: str, description: str):
         self.name = name
@@ -36,22 +38,22 @@ class Field(Generic[T]):
     def __new__(cls, value, friendly_name: str = None, description: str = None):
         # <print(f"Field {cls.__name__} created with value {value} of type {type(value)}")
         if isinstance(value, str):
-            from src import FieldString
+            from confighandler.controller.fields.FieldString import FieldString
             return super().__new__(FieldString)
         elif isinstance(value, int):
-            from src import FieldInt
+            from confighandler.controller.fields.FieldInt import FieldInt
             return super().__new__(FieldInt)
         elif isinstance(value, float):
-            from src import FieldFloat
+            from confighandler.controller.fields.FieldFloat import FieldFloat
             return super().__new__(FieldFloat)
         elif isinstance(value, Path):
-            from src import FieldPath
+            from confighandler.controller.fields.FieldPath import FieldPath
             return super().__new__(FieldPath)
         elif isinstance(value, tuple):
-            from src import FieldTuple
+            from confighandler.controller.fields.FieldTuple import FieldTuple
             return super().__new__(FieldTuple)
         elif isinstance(value, list):
-            from src import FieldList
+            from confighandler.controller.fields.FieldList import FieldList
             return super().__new__(FieldList)
 
     def serialize(self):

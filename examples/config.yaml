@@ -1,4 +1,4 @@
-# - Configuration file stored 2023-09-26 10:06:54.839309 - 
+# - Configuration file stored 2023-09-26 10:50:00.266528 - 
 LaserConfig: #!!python/object:controller.LaserConfig
  wavelength_range: 850 # wavelength_range: None
  velocity: 2.0 # velocity: None

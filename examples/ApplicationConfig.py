@@ -1,7 +1,9 @@
+import sys
 from pathlib import Path
+sys.path.append('../src/')
 
-from src import confighandler as cfg
-from examples.LaserConfig import LaserConfig
+import confighandler as cfg
+from LaserConfig import LaserConfig
 
 
 class ApplicationConfig(cfg.ConfigNode):
