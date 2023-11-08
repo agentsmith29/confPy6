@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Author(s): Christoph Schmidt <christoph.schmidt@tugraz.at>
+Created: 2023-10-19 12:35
+Package Version: 0.0.1
+Description:
+"""
+
 from confighandler.controller.Field import Field
 from confighandler.view.fields.FieldViewFloat import FieldViewFloat
 
