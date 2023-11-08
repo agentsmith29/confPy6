@@ -45,7 +45,7 @@ class FieldViewPath(FieldView):
         grd.addWidget(self.ui_edit_fields_lbl[-1], 1, 0, 1, 2)
 
         self.parent_field.logger.info(f"Registered QEditField for {self.ui_edit_fields[-1]}")
-        self.value_changed.connect(self._on_value_changed)
+
 
         wdg.setLayout(grd)
         self.ui_edit_fields_wdg.append(wdg)

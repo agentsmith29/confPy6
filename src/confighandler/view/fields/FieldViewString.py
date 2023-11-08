@@ -11,7 +11,7 @@ class FieldViewString(FieldView):
     def __init__(self, parent_field):
         super().__init__(parent_field)
 
-    def ui_field(self) -> QLineEdit:
+    def ui_field(self, view: QLineEdit = None) -> QLineEdit:
         """
         Returns a QLineEdit for the UI.
         The UI is automatically updated when the value is changed.
@@ -21,7 +21,7 @@ class FieldViewString(FieldView):
         self.ui_edit_fields.append(le)
         self.parent_field.logger.debug(f"Registering LineEdit {le}")
         self.ui_edit_fields[-1].textEdited.connect(lambda d: self._on_text_edited(le, d))
-        self.value_changed.connect(self._on_value_changed)
+
         # new
         return le
 

@@ -100,8 +100,9 @@ class Field(Generic[T]):
     def replace_keywords(self, fr: str):
         """Replaces the keywords in the given value with the values of the keywords dict"""
         # extract all occurencaes of strings between { and }
-        m = re.findall('\{(.*?)\}', fr)
+
         if isinstance(fr, str):
+            m = re.findall('\{(.*?)\}', fr)
             for kw in m:
                 if kw in self.keywords.keys():
                     fr = fr.replace('{' + kw + '}', str(self.keywords[kw]))

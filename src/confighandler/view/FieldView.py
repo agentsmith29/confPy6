@@ -1,10 +1,11 @@
 from typing import T
 
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 
 
 class FieldView(QWidget):
-    value_changed = NotImplementedError()
+    value_changed = Signal(T)
 
     def __init__(self, parent_field):
         super().__init__()
@@ -14,10 +15,18 @@ class FieldView(QWidget):
         self.ui_edit_fields = []
         self.tree_items = []
 
+        self.value_changed.connect(self._on_value_changed)
+
         if isinstance(T, str):
             print(">>> String")
 
-    def ui_field(self) -> QWidget:
+    def _on_value_changed(self, value):
+        raise NotImplementedError()
+
+    def add_new_view(self, view: QWidget):
+        self.ui_field(view)
+
+    def ui_field(self, view: QWidget) -> QWidget:
         """
         Returns a QLineEdit for the UI.
         The UI is automatically updated when the value is changed.

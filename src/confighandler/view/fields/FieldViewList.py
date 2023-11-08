@@ -12,16 +12,14 @@ class FieldViewList(FieldView):
     def __init__(self, parent_field: 'FieldTuple'):
         super().__init__(parent_field)
 
-    def ui_field(self) -> QWidget:
+    def ui_field(self, view: QLineEdit = None) -> QLineEdit:
         """
 
         """
-        self.ui_edit_fields.append(QtWidgets.QLineEdit(
-            str(self.parent_field.value)))
+        self.ui_edit_fields.append(QLineEdit(str(self.parent_field.value)))
         self.ui_edit_fields[-1].textEdited.connect(self._on_text_edited)
         # self.ui_edit_fields[-1] : QtWidgets.QLineEdit
         self.ui_edit_fields[-1].editingFinished.connect(self._on_edited_finished)
-        self.value_changed.connect(self._on_value_changed)
         # new
         return self.ui_edit_fields[-1]
 
