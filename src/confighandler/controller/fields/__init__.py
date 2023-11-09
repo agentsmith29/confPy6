@@ -1,1 +1,1 @@
-from . import FieldString, FieldInt, FieldFloat, FieldPath, FieldTuple, FieldList
+from . import FieldString, FieldInt, FieldFloat, FieldPath, FieldTuple, FieldList, FieldBool

@@ -23,8 +23,12 @@ class FieldViewTuple(FieldView):
         """
 
         """
-        self.ui_edit_fields.append(QtWidgets.QLineEdit(
-            str(self.parent_field.value)))
+        if view is None:
+            le = QtWidgets.QLineEdit(str(self.parent_field.value))
+        else:
+            le: QLineEdit = view
+        le.setToolTip(self.parent_field._description)
+        self.ui_edit_fields.append(le)
         self.ui_edit_fields[-1].textEdited.connect(self._on_text_edited)
         # self.ui_edit_fields[-1] : QtWidgets.QLineEdit
         self.ui_edit_fields[-1].editingFinished.connect(self._on_edited_finished)

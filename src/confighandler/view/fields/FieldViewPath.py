@@ -10,7 +10,7 @@ from pathlib import Path
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QWidget, QGridLayout, QFileDialog
+from PySide6.QtWidgets import QWidget, QGridLayout, QFileDialog, QLineEdit
 
 from confighandler.view.FieldView import FieldView
 
@@ -24,7 +24,7 @@ class FieldViewPath(FieldView):
         self.ui_edit_fields_wdg = []
         self.ui_btn_opens = []
 
-    def ui_field(self) -> QWidget:
+    def ui_field(self, view: QLineEdit = None) -> QWidget:
         """
         Returns a QLineEdit for the UI.
         The UI is automatically updated when the value is changed.
@@ -33,13 +33,13 @@ class FieldViewPath(FieldView):
         grd = QGridLayout()
         grd.setContentsMargins(0, 0, 0, 0)
 
-        self.ui_edit_fields_lbl.append(
-            QtWidgets.QLabel(str(self.parent_field.get()), parent=self)
-        )
-
-        self.ui_edit_fields.append(
-            QtWidgets.QLineEdit(str(self.parent_field.value), parent=self)
-        )
+        if view is None:
+            le = QLineEdit(str(self.parent_field.value), parent=self)
+        else:
+            le: QLineEdit = view
+        le.setToolTip(self.parent_field._description)
+        self.ui_edit_fields_lbl.append(QtWidgets.QLabel(str(self.parent_field.get()), parent=self))
+        self.ui_edit_fields.append(le)
 
         self.ui_edit_fields[-1].textEdited.connect(self._on_text_edited)
 

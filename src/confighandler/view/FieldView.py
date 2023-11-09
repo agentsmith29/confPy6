@@ -15,7 +15,7 @@ from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 class FieldView(QWidget):
     value_changed = Signal(T)
 
-    def __init__(self, parent_field):
+    def __init__(self, parent_field: 'Field'):
         super().__init__()
         self.parent_field = parent_field
 
@@ -24,6 +24,7 @@ class FieldView(QWidget):
         self.tree_items = []
 
         self.value_changed.connect(self._on_value_changed)
+        #self.setToolTip(parent_field._description)
 
         if isinstance(T, str):
             print(">>> String")

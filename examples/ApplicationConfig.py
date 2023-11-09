@@ -23,6 +23,11 @@ class ApplicationConfig(cfg.ConfigNode):
                                                       friendly_name="wafer_number",
                                                       description="The version of the wafer")
 
+        self.check: cfg.Field[bool] = cfg.Field(False,
+                                                      friendly_name="testcheck",
+                                                      description="Testcheck")
+
+
         self.wafer_nr: cfg.Field[str] = cfg.Field("12345ABCD_{wafer_number}",
                                                   friendly_name="wafer_nr",
                                                   description="The version of the wafer")
@@ -35,7 +40,7 @@ class ApplicationConfig(cfg.ConfigNode):
                                                      friendly_name="wafer_list",
                                                      description="The version of the wafer")
 
-        self.laser_config: LaserConfig = LaserConfig()
+        #self.laser_config: LaserConfig = LaserConfig()
 
 
         self.register()

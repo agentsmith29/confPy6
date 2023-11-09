@@ -25,7 +25,11 @@ class FieldViewString(FieldView):
         The UI is automatically updated when the value is changed.
         """
         # old
-        le = QtWidgets.QLineEdit(str(self.parent_field.value))
+        if view is None:
+            le = QtWidgets.QLineEdit(str(self.parent_field.value))
+        else:
+            le: QLineEdit = view
+        le.setToolTip(self.parent_field._description)
         self.ui_edit_fields.append(le)
         self.parent_field.logger.debug(f"Registering LineEdit {le}")
         self.ui_edit_fields[-1].textEdited.connect(lambda d: self._on_text_edited(le, d))

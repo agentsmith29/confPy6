@@ -44,16 +44,19 @@ class Field(Generic[T]):
         self.logger.debug(f"Field {self.__class__.__name__} created with value {value} of type {type(value)}")
 
     def __new__(cls, value, friendly_name: str = None, description: str = None):
-        # <print(f"Field {cls.__name__} created with value {value} of type {type(value)}")
+        #print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
         if isinstance(value, str):
             from confighandler.controller.fields.FieldString import FieldString
             return super().__new__(FieldString)
-        elif isinstance(value, int):
+        elif type(value) is int:
             from confighandler.controller.fields.FieldInt import FieldInt
             return super().__new__(FieldInt)
-        elif isinstance(value, float):
+        elif type(value) is float:
             from confighandler.controller.fields.FieldFloat import FieldFloat
             return super().__new__(FieldFloat)
+        elif type(value) is bool:
+            from confighandler.controller.fields.FieldBool import FieldBool
+            return super().__new__(FieldBool)
         elif isinstance(value, Path):
             from confighandler.controller.fields.FieldPath import FieldPath
             return super().__new__(FieldPath)
