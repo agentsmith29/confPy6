@@ -11,21 +11,21 @@ import logging
 
 import yaml
 
-from confighandler.controller.CSignal import CSignal
-from confighandler.controller.Field import Field
-from confighandler.view.ConfigView import ConfigView
+from .CSignal import CSignal
+from .Field import Field
+from ..view.ConfigView import ConfigView
+
+import pathlib
 
 
 class ConfigNode(object):
     field_changed = CSignal()
 
-
     cur_time = datetime.datetime.now()
 
-
-
-    def __init__(self):
+    def __init__(self, path: str = None):
         super().__init__()
+
         self.name = self.__class__.__name__
         self.logger = logging.getLogger(self.name)
         self.owner = None
@@ -35,11 +35,21 @@ class ConfigNode(object):
 
         self.fields = {}
         self.configs = {}
-        self.keywords =  {
+        self.keywords = {
             "date": self.cur_time.strftime("%Y_%m_%d"),
             "time": self.cur_time.strftime("%H_%M"),
             "date_time": self.cur_time.strftime("%Y%m%d_%H%M")
         }
+
+        if path is None:
+            self._path = pathlib.Path(".")
+        else:
+            self._path = pathlib.Path(path)
+            # Check if the path exists otherwise create it
+            if not self._path.exists():
+                self._path.mkdir(parents=True, exist_ok=True)
+
+
         self.field_changed.connect(self._on_field_changed)
 
     # ==================================================================================================================
@@ -121,9 +131,9 @@ class ConfigNode(object):
     def _register_field(self):
         for attr, val in self.__dict__.items():
             if isinstance(val, Field):
-                #val.__set_name__(self.__class__.__name__, attr)
+                # val.__set_name__(self.__class__.__name__, attr)
                 self.fields[attr] = val
-                #val.register(self.keywords, self.view.keywords_changed)
+                # val.register(self.keywords, self.view.keywords_changed)
                 val.register(self.__class__.__name__, attr,
                              self.keywords, self.field_changed)
         self.view.keywords_changed.emit(self.keywords)
@@ -140,11 +150,11 @@ class ConfigNode(object):
     # ==================================================================================================================
     # I/O Operations
     # ==================================================================================================================
-    def save(self, file: str, background_save = True):
+    def save(self, file: str, background_save=True):
         # write the string to a file
         with open(file, 'w+') as stream:
             stream.write(self.serialize())
-            #print(self.serialize())
+            # print(self.serialize())
         if not background_save:
             self.logger.debug(f"Saved config to {file}")
         # with open(file, 'w+') as stream:
@@ -156,19 +166,20 @@ class ConfigNode(object):
     def load(self, file: str):
         # load the yaml file
         with open(file, 'r') as stream:
-            conent = yaml.load(stream, Loader=yaml.FullLoader)
-        self.deserialize(conent)
+            content = yaml.load(stream, Loader=yaml.FullLoader)
+        self.deserialize(content)
 
     # ==================================================================================================================
     # Functions that happens on a change
     # ==================================================================================================================
     def _on_field_changed(self):
         # Emit that a field has changed, thus the keywords have changed
-        #print(f"Field changed {self.keywords}")
+        # print(f"Field changed {self.keywords}")
         for attr, val in self.fields.items():
             val: Field
             val._on_keyword_changed()
 
         if self._level == 0:
-            #print(f"Saving config {self.name}")
-            self.save("config.yaml", background_save=True)
+            # print(f"Saving config {self.name}")
+            file = f"{self._path}/{self.__class__.__name__}.yaml"
+            self.save(file=file, background_save=True)
