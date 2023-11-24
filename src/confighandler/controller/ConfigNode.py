@@ -23,11 +23,13 @@ class ConfigNode(object):
 
     cur_time = datetime.datetime.now()
 
-    def __init__(self, path: str = None):
+    def __init__(self, path: str = None, enable_log: bool = False):
         super().__init__()
 
+        self.enable_log = enable_log
         self.name = self.__class__.__name__
         self.logger = logging.getLogger(self.name)
+
         self.owner = None
         self._level = 0
 
@@ -49,8 +51,9 @@ class ConfigNode(object):
             if not self._path.exists():
                 self._path.mkdir(parents=True, exist_ok=True)
 
-
         self.field_changed.connect(self._on_field_changed)
+        self.config_logger(enable=self.enable_log)
+
 
     # ==================================================================================================================
     #
@@ -134,8 +137,8 @@ class ConfigNode(object):
                 # val.__set_name__(self.__class__.__name__, attr)
                 self.fields[attr] = val
                 # val.register(self.keywords, self.view.keywords_changed)
-                val.register(self.__class__.__name__, attr,
-                             self.keywords, self.field_changed)
+                val.register(self.__class__.__name__, attr, self.keywords, self.field_changed)
+                val.config_logger(enable=self.enable_log)
         self.view.keywords_changed.emit(self.keywords)
 
     def _register_config(self):
@@ -183,3 +186,12 @@ class ConfigNode(object):
             # print(f"Saving config {self.name}")
             file = f"{self._path}/{self.__class__.__name__}.yaml"
             self.save(file=file, background_save=True)
+
+    # ==================================================================================================================
+    # Miscs
+    # ==================================================================================================================
+    def config_logger(self, enable: bool = True, level: str = "DEBUG"):
+        self.logger.warning(f"Disabled logging for {self.name}")
+        self.logger.disabled = not enable
+        for attr, val in self.fields.items():
+            val.enable_log(enable, level)

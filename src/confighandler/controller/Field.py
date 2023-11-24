@@ -15,8 +15,6 @@ from confighandler.controller.CSignal import CSignal
 from confighandler.view.FieldView import FieldView
 
 
-
-
 class FieldData(object):
     def __init__(self, name: str, value, friendly_name: str, description: str):
         self.name = name
@@ -28,10 +26,14 @@ T = TypeVar('T')
 
 class Field(Generic[T]):
 
-    def __init__(self, value: T, friendly_name: str = None, description: str = None):
+    def __init__(self, value: T, friendly_name: str = None, description: str = None, enable_log: bool = False):
         super().__init__()
-        self.logger = logging.getLogger(self.__class__.__name__)
-        self._data = FieldData(self.__class__.__name__, value, friendly_name, description)
+        self.enable_log = enable_log
+        self.name = self.__class__.__name__
+        self.logger = logging.getLogger(self.name)
+        self.config_logger(enable=self.enable_log)
+
+        self._data = FieldData(self.name, value, friendly_name, description)
 
         self._friendly_name: str = friendly_name
         self._description: str = description
@@ -44,7 +46,7 @@ class Field(Generic[T]):
         self.logger.debug(f"Field {self.__class__.__name__} created with value {value} of type {type(value)}")
 
     def __new__(cls, value, friendly_name: str = None, description: str = None):
-        #print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
+        # print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
         if isinstance(value, str):
             from confighandler.controller.fields.FieldString import FieldString
             return super().__new__(FieldString)
@@ -103,17 +105,16 @@ class Field(Generic[T]):
     def set_keywords(self):
         """Set the keywords for the field. Also updates the keywords dict if a value of a field is changed."""
         # self.keywords["{" + self.name + "}"] = self.value
-        #self.logger.info(f"Setting keywords for {self.name} to {self.value}")
+        # self.logger.info(f"Setting keywords for {self.name} to {self.value}")
         self.keywords[self.name] = str(self.value).replace(' ', '_').replace('.', '_').replace(',', '_')
         self.csig_field_changed.emit()
-
 
     def replace_keywords(self, fr: str):
         """Replaces the keywords in the given value with the values of the keywords dict"""
         # extract all occurencaes of strings between { and }
 
         if isinstance(fr, str):
-            m = re.findall('\{(.*?)\}', fr)
+            m = re.findall('{(.*?)}', fr)
             for kw in m:
                 if kw in self.keywords.keys():
                     fr = fr.replace('{' + kw + '}', str(self.keywords[kw]))
@@ -146,7 +147,7 @@ class Field(Generic[T]):
             self.logger.info(f"{self.name} = {value} ({type(value)})")
             self._set(value)
             self.set_keywords()
-            #self.view.value_changed.emit(self.value)
+            # self.view.value_changed.emit(self.value)
             # This emits a function that notifies the owner that the field has been set
             self.csig_field_changed.emit()
 
@@ -161,7 +162,7 @@ class Field(Generic[T]):
 
     def _on_keyword_changed(self):
         self.set(self.value)
-        #print(f"Field {self.__class__.__name__}._on_keyword_changed called: {self.value}: {str(self.value)}")
+        # print(f"Field {self.__class__.__name__}._on_keyword_changed called: {self.value}: {str(self.value)}")
         self.view.value_changed.emit(self.value)
 
     def _yaml_repr(self):
@@ -173,4 +174,12 @@ class Field(Generic[T]):
     def __repr__(self):
         return str(f"{self.__class__.__name__}({self.value})")
 
-
+    # ==================================================================================================================
+    # Miscs
+    # ==================================================================================================================
+    def config_logger(self, enable: bool = True, level: str = "DEBUG"):
+        if enable:
+            self.logger.info(f"Enabled logging for {self.name}")
+        else:
+            self.logger.warning(f"Disabled logging for {self.name}")
+        self.logger.disabled = not enable

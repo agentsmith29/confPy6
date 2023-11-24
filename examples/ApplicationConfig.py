@@ -23,8 +23,7 @@ class ApplicationConfig(cfg.ConfigNode):
                                                       friendly_name="wafer_number",
                                                       description="The version of the wafer")
 
-        self.check: cfg.Field[bool] = cfg.Field(False,
-                                                      friendly_name="testcheck",
+        self.check: cfg.Field[bool] = cfg.Field(False, friendly_name="testcheck",
                                                       description="Testcheck")
 
 
