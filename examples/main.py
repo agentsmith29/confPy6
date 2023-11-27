@@ -11,16 +11,10 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # setup the logging module
-    FORMAT = "%(message)s"
-    logging.basicConfig(
-        level="DEBUG", format=FORMAT, datefmt="[%X]", handlers=[
-            RichHandler(rich_tracebacks=True)
-        ]
-    )
 
     config = ApplicationConfig(enable_log=True)
-    print(config.load('./configs/ApplicationConfig.yaml'))
-    config.autosave(enable=True, path='./configs_autosave')
+    #print(config.load('./configs/ApplicationConfig.yaml'))
+    #config.autosave(enable=True, path='./configs_autosave')
 
     #print(config.wafer_version)
     #config.wafer_version.get()
