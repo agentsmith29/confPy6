@@ -7,6 +7,7 @@ Description:
 """
 
 import pathlib
+import re
 from pathlib import Path
 
 from confighandler.controller.Field import Field
@@ -31,3 +32,15 @@ class FieldPath(Field):
 
     def _yaml_repr(self):
         return str('"@Path:<' + str(Path(self.value).as_posix()) + '>"')
+
+    def _field_parser(self, val):
+        # Overwritten function, to replace the @Path keyword
+        match = re.findall(r'@Path:<([^>]*)>', val)
+        if len(match) > 0:
+            self.logger.info(f"Found @Path: {val}. Check syntax, multiple @Path: are not allowed in one field.")
+            return Path(match[0])
+        elif len(match) == 0:
+            self.logger.debug(f"No @Path: found in {val}. Please check field.")
+            return Path('./')
+    def __str__(self):
+        return str(Path(self.value).as_posix())

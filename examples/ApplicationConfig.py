@@ -8,8 +8,8 @@ from LaserConfig import LaserConfig
 
 class ApplicationConfig(cfg.ConfigNode):
 
-    def __init__(self, path="./configs") -> None:
-        super().__init__(path=path)
+    def __init__(self, enable_log=True) -> None:
+        super().__init__(enable_log=enable_log)
 
         self.output_directory: cfg.Field[Path] = cfg.Field(Path("C:\\{wafer_nr}"),
                                                            friendly_name="Output Directory",
@@ -39,7 +39,7 @@ class ApplicationConfig(cfg.ConfigNode):
                                                      friendly_name="wafer_list",
                                                      description="The version of the wafer")
 
-        self.laser_config: LaserConfig = LaserConfig(path='configs')
+        self.laser_config: LaserConfig = LaserConfig()
 
 
         self.register()

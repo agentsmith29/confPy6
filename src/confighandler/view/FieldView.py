@@ -6,18 +6,20 @@ Package Version: 0.0.1
 Description:
 """
 
-from typing import T
+
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 
+import confighandler.controller.Field as Field
+
 
 class FieldView(QWidget):
-    value_changed = Signal(T)
+    value_changed = Signal(Field.T)
 
-    def __init__(self, parent_field: 'Field'):
+    def __init__(self, parent_field: Field):
         super().__init__()
-        self.parent_field = parent_field
+        self.parent_field: Field.Field = parent_field
 
         self.label = None
         self.ui_edit_fields = []
@@ -26,7 +28,7 @@ class FieldView(QWidget):
         self.value_changed.connect(self._on_value_changed)
         #self.setToolTip(parent_field._description)
 
-        if isinstance(T, str):
+        if isinstance(Field.T, str):
             print(">>> String")
 
     def _on_value_changed(self, value):

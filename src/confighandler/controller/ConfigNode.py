@@ -10,6 +10,7 @@ import datetime
 import logging
 
 import yaml
+from PySide6.QtWidgets import QMessageBox
 
 from .CSignal import CSignal
 from .Field import Field
@@ -23,9 +24,10 @@ class ConfigNode(object):
 
     cur_time = datetime.datetime.now()
 
-    def __init__(self, path: str = None, enable_log: bool = False):
+    def __init__(self, enable_log: bool = False):
         super().__init__()
 
+        self._autosave = False
         self.enable_log = enable_log
         self.name = self.__class__.__name__
         self.logger = logging.getLogger(self.name)
@@ -42,14 +44,6 @@ class ConfigNode(object):
             "time": self.cur_time.strftime("%H_%M"),
             "date_time": self.cur_time.strftime("%Y%m%d_%H%M")
         }
-
-        if path is None:
-            self._path = pathlib.Path(".")
-        else:
-            self._path = pathlib.Path(path)
-            # Check if the path exists otherwise create it
-            if not self._path.exists():
-                self._path.mkdir(parents=True, exist_ok=True)
 
         self.field_changed.connect(self._on_field_changed)
         self.config_logger(enable=self.enable_log)
@@ -106,7 +100,7 @@ class ConfigNode(object):
 
     def deserialize(self, content):
         """Deserializes the content of the config based on the yaml file"""
-        print(f"Deserializing {content}")
+        self.logger.info(f"Deserializing {content}")
         for attr, val in content.items():
             # Check if the attribute is not of type GenericConfig
             # therefore get the attribute type of this class
@@ -115,19 +109,21 @@ class ConfigNode(object):
                 print(f"Found own config")
                 self.deserialize(val)
             elif attr in self.__dict__:
-                field = getattr(self, attr)
-                if not isinstance(field, ConfigNode):
-                    print(f"Deserializing field {attr} with content: {val}")
-                    field.set(val)
+                if not isinstance(getattr(self, attr), ConfigNode):
+                    self.logger.info(f"Deserializing field {attr} with content: {val}")
+                    val = getattr(self, attr)._field_parser(val)
+                    getattr(self, attr).set(val)
                 else:
-                    print(f"Deserializing config {attr} with content: {val}")
+                    self.logger.info(f"Deserializing config {attr} with content: {val}")
                     getattr(self, attr).deserialize(val)
+
+
+
 
     # ==================================================================================================================
     # Registering the fields and configs
     # ==================================================================================================================
     def register(self):
-        # print("register")
         self._register_field()
         self._register_config()
 
@@ -153,7 +149,9 @@ class ConfigNode(object):
     # ==================================================================================================================
     # I/O Operations
     # ==================================================================================================================
-    def save(self, file: str, background_save=True):
+    def save(self, file: str=None, background_save=True):
+        if file is None:
+            file = f"{self._path}/{self.__class__.__name__}.yaml"
         # write the string to a file
         with open(file, 'w+') as stream:
             stream.write(self.serialize())
@@ -165,6 +163,17 @@ class ConfigNode(object):
         # with open(file, 'w+') as stream:
         #    stream.write(
         # print(self._dump(cfg))
+
+    def autosave(self, enable: bool = False, path: str = None):
+        self._autosave = enable
+        if self._autosave:
+            if path is None:
+                self._path = pathlib.Path(".")
+            else:
+                self._path = pathlib.Path(path)
+                # Check if the path exists otherwise create it
+                if not self._path.exists():
+                    self._path.mkdir(parents=True, exist_ok=True)
 
     def load(self, file: str):
         # load the yaml file
@@ -182,10 +191,10 @@ class ConfigNode(object):
             val: Field
             val._on_keyword_changed()
 
-        if self._level == 0:
-            # print(f"Saving config {self.name}")
-            file = f"{self._path}/{self.__class__.__name__}.yaml"
-            self.save(file=file, background_save=True)
+        if self._level == 0 and self._autosave:
+                file = f"{self._path}/{self.__class__.__name__}.yaml"
+                # Saves on every field change
+                self.save(file=file, background_save=True)
 
     # ==================================================================================================================
     # Miscs

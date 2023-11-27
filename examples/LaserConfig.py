@@ -3,8 +3,8 @@ import confighandler as cfg
 
 class LaserConfig(cfg.ConfigNode):
 
-    def __init__(self, path=None) -> None:
-        super().__init__(path=path)
+    def __init__(self, enable_log=False) -> None:
+        super().__init__(enable_log=enable_log)
         self.wavelength_range = cfg.Field(850)
         self.velocity = cfg.Field(2.0)
         self.acceleration = cfg.Field(1.0)

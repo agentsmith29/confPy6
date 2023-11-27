@@ -37,7 +37,7 @@ class FieldViewPath(FieldView):
             le = QLineEdit(str(self.parent_field.value), parent=self)
         else:
             le: QLineEdit = view
-        le.setToolTip(self.parent_field._description)
+        le.setToolTip(f"({self.parent_field.name}) {self.parent_field._description}")
         self.ui_edit_fields_lbl.append(QtWidgets.QLabel(str(self.parent_field.get()), parent=self))
         self.ui_edit_fields.append(le)
 

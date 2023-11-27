@@ -124,6 +124,10 @@ class Field(Generic[T]):
         else:
             return fr
 
+    def _field_parser(self, val):
+        # Dummy function, which can be overwritten, if the field should get parsed beforehand (e.g. when using pathes)
+        return val
+
     # ==================================================================================================================
     # Getter and Setter for value retrival
     # ==================================================================================================================

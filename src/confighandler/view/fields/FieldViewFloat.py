@@ -31,7 +31,7 @@ class FieldViewFloat(FieldView):
             dsp.setRange(-100000, 100000)
             dsp.setValue(self.parent_field.value)
             dsp.setDecimals(3)
-        dsp.setToolTip(self.parent_field._description)
+        dsp.setToolTip(f"({self.parent_field.name}) {self.parent_field._description}")
         self.ui_edit_fields.append(dsp)
         self.ui_edit_fields[-1].valueChanged.connect(self._on_value_edited)
 
