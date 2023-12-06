@@ -12,6 +12,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 
 import confighandler.controller.Field as Field
+from confighandler.controller.CObject import CObject
 
 
 class FieldView(QWidget):

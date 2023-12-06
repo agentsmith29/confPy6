@@ -13,9 +13,9 @@ import confighandler as cfg
 
 class SecondConfig(cfg.ConfigNode):
 
-    def __init__(self, enable_log=True) -> None:
+    def __init__(self, internal_log=True) -> None:
         # Call the base class (important!)
-        super().__init__(enable_log=enable_log)
+        super().__init__(internal_log=internal_log)
 
         # Some fields
         # Create a field of type int. Set a default value, a friendly name and a description
@@ -27,9 +27,9 @@ class SecondConfig(cfg.ConfigNode):
 
 class ApplicationConfig(cfg.ConfigNode):
 
-    def __init__(self, enable_log=True) -> None:
+    def __init__(self, internal_log=True) -> None:
         # Call the base class (important!)
-        super().__init__(enable_log=enable_log)
+        super().__init__(internal_log=internal_log)
 
         # Some fields
         # Create a field of type int. Set a default value, a friendly name and a description

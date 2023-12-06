@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 from typing import Generic, T, TypeVar
 
+from confighandler.controller.CObject import CObject
 from confighandler.controller.CSignal import CSignal
 from confighandler.view.FieldView import FieldView
 
@@ -24,14 +25,15 @@ class FieldData(object):
 T = TypeVar('T')
 
 
-class Field(Generic[T]):
+class Field(Generic[T], CObject):
 
-    def __init__(self, value: T, friendly_name: str = None, description: str = None, enable_log: bool = False):
+    def __init__(self, value: T, friendly_name: str = None, description: str = None,
+                 internal_log=True, internal_log_level=logging.INFO):
         super().__init__()
-        self.enable_log = enable_log
-        self.name = self.__class__.__name__
-        self.logger = logging.getLogger(self.name)
-        self.config_logger(enable=self.enable_log)
+        self.internal_log_enabled = internal_log
+        self.internal_log_level = internal_log_level
+
+        self.logger, self.log_handler = self.create_new_logger(self.name)
 
         self._data = FieldData(self.name, value, friendly_name, description)
 
@@ -43,7 +45,8 @@ class Field(Generic[T]):
 
         # The view, usd for handling the UI
         self.view = FieldView(self)
-        self.logger.debug(f"Field {self.__class__.__name__} created with value {value} of type {type(value)}")
+
+        self._internal_logger.debug(f"Field {self.__class__.__name__} created with value {value} of type {type(value)}")
 
     def __new__(cls, value, friendly_name: str = None, description: str = None):
         # print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
@@ -85,8 +88,13 @@ class Field(Generic[T]):
         :param keywords: The keywords dict
         :param csig_field_changed: The signal that is emitted when the keywords are changed
         """
+
+
         self.name = name
         self.owner = owner
+        formatter = logging.Formatter(f'%(name)s [{self.name}] %(message)s')
+
+        self._internal_log_handler.setFormatter(formatter)
         if self._friendly_name is None:
             self._friendly_name = self.name
 
@@ -97,7 +105,7 @@ class Field(Generic[T]):
         # self.keywords_changed = keyword_changed
         # self.keywords_changed.connect(self._on_keyword_changed)
         self.set_keywords()
-        self.logger.info(f"Field assigned to {self.owner} with name {self.name}")
+        self._internal_logger.info(f"Field '{self.name}' assigned to {self.owner}")
 
     # ==================================================================================================================
     # Set the keywords for the field
@@ -105,7 +113,7 @@ class Field(Generic[T]):
     def set_keywords(self):
         """Set the keywords for the field. Also updates the keywords dict if a value of a field is changed."""
         # self.keywords["{" + self.name + "}"] = self.value
-        # self.logger.info(f"Setting keywords for {self.name} to {self.value}")
+        # self._internal_logger.info(f"Setting keywords for {self.name} to {self.value}")
         self.keywords[self.name] = str(self.value).replace(' ', '_').replace('.', '_').replace(',', '_')
         self.csig_field_changed.emit()
 
@@ -148,7 +156,7 @@ class Field(Generic[T]):
 
     def set(self, value: T):
         if not self.value == value:
-            self.logger.info(f"{self.name} = {value} ({type(value)})")
+            self._internal_logger.info(f"{self.name} = {value} ({type(value)})")
             self._set(value)
             self.set_keywords()
             # self.view.value_changed.emit(self.value)
@@ -178,12 +186,3 @@ class Field(Generic[T]):
     def __repr__(self):
         return str(f"{self.__class__.__name__}({self.value})")
 
-    # ==================================================================================================================
-    # Miscs
-    # ==================================================================================================================
-    def config_logger(self, enable: bool = True, level: str = "DEBUG"):
-        if enable:
-            self.logger.info(f"Enabled logging for {self.name}")
-        else:
-            self.logger.warning(f"Disabled logging for {self.name}")
-        self.logger.disabled = not enable

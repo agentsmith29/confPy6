@@ -1,3 +1,4 @@
+import logging
 import sys
 from pathlib import Path
 sys.path.append('../src/')
@@ -8,12 +9,10 @@ from LaserConfig import LaserConfig
 
 class ApplicationConfig(cfg.ConfigNode):
 
-    def __init__(self, enable_log=True) -> None:
-        super().__init__(enable_log=enable_log)
+    def __init__(self, internal_log=True, internal_log_level= logging.DEBUG) -> None:
+        super().__init__(internal_log=internal_log, internal_log_level=internal_log_level)
 
-        self.output_directory: cfg.Field[Path] = cfg.Field(Path("C:\\{wafer_nr}"),
-                                                           friendly_name="Output Directory",
-                                                           description="The version of the wafer")
+        self.output_directory: cfg.Field[Path] = cfg.Field(Path("C:\\{wafer_nr}"))
 
         self.wafer_version: cfg.Field[str] = cfg.Field("v1.0",
                                                        friendly_name="wafer_version",
@@ -39,7 +38,8 @@ class ApplicationConfig(cfg.ConfigNode):
                                                      friendly_name="wafer_list",
                                                      description="The version of the wafer")
 
-        self.laser_config: LaserConfig = LaserConfig()
+        self.laser_config: LaserConfig = LaserConfig(internal_log=internal_log,
+                                                     internal_log_level=internal_log_level)
 
 
         self.register()

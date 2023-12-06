@@ -11,26 +11,31 @@ import logging
 
 import yaml
 from PySide6.QtWidgets import QMessageBox
+from rich.logging import RichHandler
 
+from .CObject import CObject
 from .CSignal import CSignal
 from .Field import Field
 from ..view.ConfigView import ConfigView
 
 import pathlib
+import rich
 
-
-class ConfigNode(object):
+class ConfigNode(CObject):
     field_changed = CSignal()
 
     cur_time = datetime.datetime.now()
 
-    def __init__(self, enable_log: bool = False):
+    def __init__(self, internal_log, internal_log_level):
         super().__init__()
 
         self._autosave = False
-        self.enable_log = enable_log
+
+        self.internal_log_enabled = internal_log
+        self.internal_log_level = internal_log_level
+
         self.name = self.__class__.__name__
-        self.logger = logging.getLogger(self.name)
+        self.logger, self.log_handler = self.create_new_logger(self.name)
 
         self.owner = None
         self._level = 0
@@ -46,7 +51,7 @@ class ConfigNode(object):
         }
 
         self.field_changed.connect(self._on_field_changed)
-        self.config_logger(enable=self.enable_log)
+
 
 
     # ==================================================================================================================
@@ -100,7 +105,7 @@ class ConfigNode(object):
 
     def deserialize(self, content):
         """Deserializes the content of the config based on the yaml file"""
-        self.logger.info(f"Deserializing {content}")
+        self._internal_logger.info(f"Deserializing {content}")
         for attr, val in content.items():
             # Check if the attribute is not of type GenericConfig
             # therefore get the attribute type of this class
@@ -110,11 +115,11 @@ class ConfigNode(object):
                 self.deserialize(val)
             elif attr in self.__dict__:
                 if not isinstance(getattr(self, attr), ConfigNode):
-                    self.logger.info(f"Deserializing field {attr} with content: {val}")
+                    self._internal_logger.info(f"Deserializing field {attr} with content: {val}")
                     val = getattr(self, attr)._field_parser(val)
                     getattr(self, attr).set(val)
                 else:
-                    self.logger.info(f"Deserializing config {attr} with content: {val}")
+                    self._internal_logger.info(f"Deserializing config {attr} with content: {val}")
                     getattr(self, attr).deserialize(val)
 
 
@@ -134,7 +139,8 @@ class ConfigNode(object):
                 self.fields[attr] = val
                 # val.register(self.keywords, self.view.keywords_changed)
                 val.register(self.__class__.__name__, attr, self.keywords, self.field_changed)
-                val.config_logger(enable=self.enable_log)
+                val.internal_log_enabled = self.internal_log_enabled
+                val.internal_log_level = self.internal_log_level
         self.view.keywords_changed.emit(self.keywords)
 
     def _register_config(self):
@@ -157,7 +163,7 @@ class ConfigNode(object):
             stream.write(self.serialize())
             # print(self.serialize())
         if not background_save:
-            self.logger.debug(f"Saved config to {file}")
+            self._internal_logger.debug(f"Saved config to {file}")
         # with open(file, 'w+') as stream:
         #    yaml.dump(self, stream) # Dump it as a xaml file
         # with open(file, 'w+') as stream:
@@ -196,11 +202,5 @@ class ConfigNode(object):
                 # Saves on every field change
                 self.save(file=file, background_save=True)
 
-    # ==================================================================================================================
-    # Miscs
-    # ==================================================================================================================
-    def config_logger(self, enable: bool = True, level: str = "DEBUG"):
-        self.logger.warning(f"Disabled logging for {self.name}")
-        self.logger.disabled = not enable
-        for attr, val in self.fields.items():
-            val.enable_log(enable, level)
+
+

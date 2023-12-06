@@ -52,7 +52,7 @@ class FieldViewPath(FieldView):
         grd.addWidget(btn_open, 0, 1)
         grd.addWidget(self.ui_edit_fields_lbl[-1], 1, 0, 1, 2)
 
-        self.parent_field.logger.info(f"Registered QEditField for {self.ui_edit_fields[-1]}")
+        self.parent_field._internal_logger.info(f"Registered QEditField for {self.ui_edit_fields[-1]}")
 
 
         wdg.setLayout(grd)
