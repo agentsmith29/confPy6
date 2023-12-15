@@ -66,7 +66,7 @@ class Field(Generic[T], CObject):
         elif isinstance(value, Path):
             from confighandler.controller.fields.FieldPath import FieldPath
             return super().__new__(FieldPath)
-        elif isinstance(value, tuple):
+        elif not isinstance(value, confighandler.SelectableList) and isinstance(value, tuple):
             from confighandler.controller.fields.FieldTuple import FieldTuple
             return super().__new__(FieldTuple)
         elif not isinstance(value, confighandler.SelectableList) and isinstance(value, list):
@@ -138,7 +138,7 @@ class Field(Generic[T], CObject):
 
     def _field_parser(self, val):
         # Dummy function, which can be overwritten, if the field should get parsed beforehand (e.g. when using pathes)
-        return val
+        return {"value": val}
 
     # ==================================================================================================================
     # Getter and Setter for value retrival
@@ -166,10 +166,10 @@ class Field(Generic[T], CObject):
     def get(self) -> T:
         return self.replace_keywords(self.value)
 
-    def set(self, value: T):
+    def set(self, value: T, *args, **kwargs):
         if not self.value == value:
             self._internal_logger.info(f"{self.name} = {value} ({type(value)})")
-            self._set(value)
+            self._set(value, *args, **kwargs)
             self.set_keywords()
             # self.view.value_changed.emit(self.value)
             # This emits a function that notifies the owner that the field has been set
@@ -178,7 +178,7 @@ class Field(Generic[T], CObject):
     # ==================================================================================================================
     # Things that should happen when the value is changed
     # ==================================================================================================================
-    def _set(self, value):
+    def _set(self, value, *args, **kwargs):
         self._value = value
 
     def _on_value_changed(self, value):

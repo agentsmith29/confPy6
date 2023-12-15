@@ -117,7 +117,7 @@ class ConfigNode(CObject):
                 if not isinstance(getattr(self, attr), ConfigNode):
                     self._internal_logger.info(f"Deserializing field {attr} with content: {val}")
                     val = getattr(self, attr)._field_parser(val)
-                    getattr(self, attr).set(val)
+                    getattr(self, attr).set(**val)
                 else:
                     self._internal_logger.info(f"Deserializing config {attr} with content: {val}")
                     getattr(self, attr).deserialize(val)

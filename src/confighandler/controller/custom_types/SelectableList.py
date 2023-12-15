@@ -20,4 +20,4 @@ class SelectableList(list):
 
     def __str__(self):
         bs = super().__str__()
-        return f"{str(bs)}({self._selected_index})"
+        return f"<{self._selected_index}>{str(bs)}"

@@ -38,9 +38,9 @@ class FieldPath(Field):
         match = re.findall(r'@Path:<([^>]*)>', val)
         if len(match) > 0:
             self._internal_logger.info(f"Found @Path: {val}. Check syntax, multiple @Path: are not allowed in one field.")
-            return Path(match[0])
+            return {"value": Path(match[0])}
         elif len(match) == 0:
             self._internal_logger.debug(f"No @Path: found in {val}. Please check field.")
-            return Path('./')
+            return {"value": Path('./')}
     def __str__(self):
         return str(Path(self.value).as_posix())

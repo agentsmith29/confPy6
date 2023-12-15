@@ -44,7 +44,7 @@ class FieldViewSelectableList(ch.FieldView):
         self.parent_field.set(int(value))
 
     def _on_value_changed(self, value):
-        print(f"FieldViewSelectableList._on_value_changed({value})")
+        self.parent_field.logger.info(f"{self.parent_field}: FieldViewSelectableList._on_value_changed {value}")
         for edit in self.ui_edit_fields:
             edit: QComboBox
             edit.setCurrentIndex(value)
