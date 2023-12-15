@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 from typing import Generic, T, TypeVar
 
+import confighandler
 from confighandler.controller.CObject import CObject
 from confighandler.controller.CSignal import CSignal
 from confighandler.view.FieldView import FieldView
@@ -68,9 +69,12 @@ class Field(Generic[T], CObject):
         elif isinstance(value, tuple):
             from confighandler.controller.fields.FieldTuple import FieldTuple
             return super().__new__(FieldTuple)
-        elif isinstance(value, list):
+        elif not isinstance(value, confighandler.SelectableList) and isinstance(value, list):
             from confighandler.controller.fields.FieldList import FieldList
             return super().__new__(FieldList)
+        elif isinstance(value, confighandler.SelectableList):
+            from confighandler.controller.fields.FieldSelectableList import FieldSelectableList
+            return super().__new__(FieldSelectableList)
 
     def serialize(self):
         """Used for serializing instances. Returns the current field as a yaml-line."""
@@ -151,6 +155,14 @@ class Field(Generic[T], CObject):
     def value(self) -> T:
         return self._value
 
+    @property
+    def _value_to_emit(self):
+        """
+        By default, the value will be emitted. Overwrite if you need another behavior
+        :return:
+        """
+        return self._value
+
     def get(self) -> T:
         return self.replace_keywords(self.value)
 
@@ -175,7 +187,7 @@ class Field(Generic[T], CObject):
     def _on_keyword_changed(self):
         self.set(self.value)
         # print(f"Field {self.__class__.__name__}._on_keyword_changed called: {self.value}: {str(self.value)}")
-        self.view.value_changed.emit(self.value)
+        self.view.value_changed.emit(self._value_to_emit)
 
     def _yaml_repr(self):
         raise NotImplementedError()
@@ -184,5 +196,5 @@ class Field(Generic[T], CObject):
         return self.get()
 
     def __repr__(self):
-        return str(f"{self.__class__.__name__}({self.value})")
+        return str(f"{self.__class__.__name__}")
 

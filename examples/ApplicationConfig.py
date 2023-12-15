@@ -1,9 +1,13 @@
 import logging
 import sys
 from pathlib import Path
+
+
+
 sys.path.append('../src/')
 
 import confighandler as cfg
+from confighandler.controller.custom_types.SelectableList import SelectableList
 from LaserConfig import LaserConfig
 
 
@@ -36,6 +40,11 @@ class ApplicationConfig(cfg.ConfigNode):
 
         self.wafer_list: cfg.Field[list] = cfg.Field([1, 2],
                                                      friendly_name="wafer_list",
+                                                     description="The version of the wafer")
+
+        self.wafer_list1: cfg.Field[list] = cfg.Field(SelectableList(
+            ['a', 'b', 'c'], selected_index=0),
+                                                     friendly_name="wafer_list1",
                                                      description="The version of the wafer")
 
         self.laser_config: LaserConfig = LaserConfig(internal_log=internal_log,
