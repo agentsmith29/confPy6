@@ -24,9 +24,11 @@ class FieldViewSelectableList(ch.FieldView):
         """
 
         """
-        self.ui_edit_fields: list(QComboBox)
+        #self.ui_edit_fields: list(QComboBox)
         if view is None:
             cb = QComboBox()
+            self.parent_field.logger.info(f"{self.parent_field}: *** NEW FieldViewSelectableList.ui_field {cb}")
+
         else:
             cb: QComboBox = view
 
@@ -35,6 +37,7 @@ class FieldViewSelectableList(ch.FieldView):
 
         cb.setToolTip(f"({self.parent_field.name}) {self.parent_field._description}")
         self.ui_edit_fields.append(cb)
+        self.ui_edit_fields[-1].setCurrentIndex(self.parent_field.get_current_index())
         self.ui_edit_fields[-1].currentIndexChanged.connect(self._on_index_changed)
         #self.ui_edit_fields[-1].editingFinished.connect(self._on_edited_finished)
         # new
@@ -44,8 +47,11 @@ class FieldViewSelectableList(ch.FieldView):
         self.parent_field.set(int(value))
 
     def _on_value_changed(self, value):
-        self.parent_field.logger.info(f"{self.parent_field}: FieldViewSelectableList._on_value_changed {value}")
+        self.parent_field.logger.info(f"{self.parent_field}: FieldViewSelectableList._on_value_changed {value}"
+                                      f"-> len {len(self.ui_edit_fields)}")
         for edit in self.ui_edit_fields:
             edit: QComboBox
+            self.parent_field.logger.info(f"{edit}: Setting index to {value}")
+
             edit.setCurrentIndex(value)
 

@@ -19,7 +19,8 @@ class FieldSelectableList(ch.Field):
 
     def get_list(self) -> list:
         return list(self._value)
-
+    def get_current_index(self) -> list:
+        return self._value.selected_index
     @property
     def value(self):
         return self._value[self._value.selected_index]

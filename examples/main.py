@@ -1,5 +1,6 @@
 import logging
 import sys
+import time
 
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTreeWidget
@@ -13,9 +14,9 @@ if __name__ == "__main__":
     # setup the logging module
 
     config = ApplicationConfig(internal_log_level=logging.INFO)
-    print(config.load('./configs/ApplicationConfig.yaml'))
+    time.sleep(1)
     #config.autosave(enable=True, path='./configs_autosave')
-
+    print(config.load('./configs/ApplicationConfig.yaml'))
     #print(config.wafer_version)
     #config.wafer_version.get()
     #config.wafer_number.get()
@@ -45,8 +46,8 @@ if __name__ == "__main__":
     grd.addWidget(btn_save, 4, 0)
 
     window.setCentralWidget(wdg)
-    #print(config.save('config.yaml'))
     #print(config.load('config.yaml'))
+
 
     window.show()
 
