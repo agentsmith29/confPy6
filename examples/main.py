@@ -13,10 +13,10 @@ if __name__ == "__main__":
 
     # setup the logging module
 
-    config = ApplicationConfig(internal_log_level=logging.INFO)
+    config = ApplicationConfig()
     time.sleep(1)
     #config.autosave(enable=True, path='./configs_autosave')
-    print(config.load('./configs/ApplicationConfig.yaml'))
+    (config.load('./configs/ApplicationConfig.yaml'))
     #print(config.wafer_version)
     #config.wafer_version.get()
     #config.wafer_number.get()

@@ -31,11 +31,12 @@ class ConfigNode(CObject):
 
         self._autosave = False
 
-        self.internal_log_enabled = internal_log
-        self.internal_log_level = internal_log_level
+
 
         self.name = self.__class__.__name__
         self.logger, self.log_handler = self.create_new_logger(self.name)
+        self.internal_log_enabled = internal_log
+        self.internal_log_level = internal_log_level
 
         self.owner = None
         self._level = 0
@@ -117,7 +118,7 @@ class ConfigNode(CObject):
                 if not isinstance(getattr(self, attr), ConfigNode):
                     self._internal_logger.info(f"Deserializing field {attr} with content: {val}")
                     val = getattr(self, attr)._field_parser(val)
-                    getattr(self, attr).set(**val)
+                    getattr(self, attr).set(**val, force_emit=True)
                 else:
                     self._internal_logger.info(f"Deserializing config {attr} with content: {val}")
                     getattr(self, attr).deserialize(val)

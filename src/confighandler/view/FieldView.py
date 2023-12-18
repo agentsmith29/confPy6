@@ -18,9 +18,9 @@ from confighandler.controller.CObject import CObject
 class FieldView(QWidget):
     value_changed = Signal(Field.T)
 
-    def __init__(self, parent_field: Field):
+    def __init__(self, parent_field):
         super().__init__()
-        self.parent_field: Field.Field = parent_field
+        self.parent_field = parent_field
 
         self.label = None
         self.ui_edit_fields = []
