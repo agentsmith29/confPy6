@@ -14,26 +14,6 @@ from PySide6.QtWidgets import QWidget, QLineEdit, QComboBox, QVBoxLayout, QLabel
 import confighandler as ch
 
 
-class MyComboBox(QComboBox):
-    def __init__(self, parent=None):
-        super(MyComboBox, self).__init__(parent)
-        self.setContextMenuPolicy()  # Qt.CustomContextMenu
-
-    def show_context_menu(self, pos):
-        index = self.currentIndex()
-        if index >= 0:
-            context_menu = QMenu(self)
-            delete_action = QAction('Delete', self)
-            delete_action.triggered.connect(self.delete_item)
-            context_menu.addAction(delete_action)
-
-            action = context_menu.exec_(self.mapToGlobal(pos))
-
-    def delete_item(self):
-        index = self.currentIndex()
-        if index >= 0:
-            self.removeItem(index)
-
 
 class FieldViewAddEntry(QWidget):
     value_changed = Signal(tuple)
@@ -129,13 +109,12 @@ class FieldViewSelectableList(ch.FieldView):
             cb.clear()
         sel_list = self.parent_field.get_selectable_list()
         for v in sel_list:
-            cb.addItem(f"{v[1]} - {v[0]} ", v[0])
+            cb.addItem(f"{v[1]}", v[0])
         cb.addItem("<Add new ...>", self.add_entry.show)
         #cb.currentIndexChanged.connect(self._on_index_changed)
 
 
     def show_context_menu(self, pos, field):
-        print(field)
         index = field.currentIndex()
         if index >= 0:
             context_menu = QMenu(field)
@@ -168,8 +147,9 @@ class FieldViewSelectableList(ch.FieldView):
         self.parent_field.set(len(self.parent_field.get_selectable_list()) - 1)
         self.parent_field.csig_field_changed.emit()
 
-    def _on_value_changed(self, value):
+    def _on_value_changed_partial(self, value):
         for edit in self.ui_edit_fields:
             edit: QComboBox
-            self.parent_field.logger.info(f"{edit}: Setting index to {value}")
+            # self.parent_field.logger.info(f"{edit}: Setting index to {value}")
             edit.setCurrentIndex(value)
+            edit.setToolTip(f"<{edit.currentData()}> ({self.parent_field.name}) {self.parent_field._description}")

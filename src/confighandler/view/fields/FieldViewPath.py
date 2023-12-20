@@ -70,7 +70,7 @@ class FieldViewPath(FieldView):
     def _on_text_edited(self, value):
         self.parent_field.set(value)
 
-    def _on_value_changed(self, value: Path):
+    def _on_value_changed_partial(self, value: Path):
         # print(value)
         # Check if path exists
         for edit, lbl in zip(self.ui_edit_fields, self.ui_edit_fields_lbl):

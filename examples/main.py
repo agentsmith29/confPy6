@@ -8,12 +8,28 @@ from rich.logging import RichHandler
 
 from ApplicationConfig import ApplicationConfig
 
+class TestClass:
+
+    def __init__(self):
+        self._wafer = 0
+
+    @property
+    def wafer(self):
+        return self._wafer
+
+    @wafer.setter
+    def wafer(self, value):
+        self._wafer = value
+        print("Wafer changed to", value)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # setup the logging module
 
     config = ApplicationConfig()
+    testclass = TestClass()
     time.sleep(1)
     #config.autosave(enable=True, path='./configs_autosave')
     (config.load('./configs/ApplicationConfig.yaml'))
@@ -45,6 +61,12 @@ if __name__ == "__main__":
     btn_save.clicked.connect(lambda: config.save('./configs/ApplicationConfig.yaml'))
     grd.addWidget(btn_save, 4, 0)
 
+    # Add a new combo box
+    combo = QtWidgets.QComboBox()
+    grd.addWidget(combo, 5, 0)
+    config.wafer_list1.view.add_new_view(combo)
+    config.wafer_list1.connect_property(testclass, TestClass.wafer)
+    
     window.setCentralWidget(wdg)
     #print(config.load('config.yaml'))
 

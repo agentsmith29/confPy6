@@ -40,7 +40,7 @@ class FieldViewFloat(FieldView):
     def _on_value_edited(self, value):
         self.parent_field.set(float(value))
 
-    def _on_value_changed(self, value):
+    def _on_value_changed_partial(self, value):
         # print(f">>> {self.parent_field.name}: Value changed {value}")
         for edit in self.ui_edit_fields:
             edit.setValue(float(value))

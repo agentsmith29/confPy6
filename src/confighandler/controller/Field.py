@@ -23,6 +23,7 @@ class FieldData(object):
         self.value = [value, friendly_name, description]
 
 
+
 T = TypeVar('T')
 
 
@@ -46,6 +47,9 @@ class Field(Generic[T], CObject):
 
         # The view, usd for handling the UI
         self.view = FieldView(self)
+
+        # Connected properties that should bet set if the field changes
+        self.props = []
 
         self._internal_logger.debug(f"Field {self.__class__.__name__} created with value {value} of type {type(value)}")
 
@@ -79,6 +83,13 @@ class Field(Generic[T], CObject):
     def serialize(self):
         """Used for serializing instances. Returns the current field as a yaml-line."""
         return f"{self.name}: {self._yaml_repr()} # {self.friendly_name}: {self.description}"
+
+    def connect_property(self, instance, prop: property):
+        self.props.append((instance, prop))
+
+    def _set_all_props(self, value):
+        for inst, prop in self.props:
+            prop.fset(inst, value)
 
     # ==================================================================================================================
     # Register the field to a configuration
@@ -161,6 +172,7 @@ class Field(Generic[T], CObject):
         By default, the value will be emitted. Overwrite if you need another behavior
         :return:
         """
+
         return self._value
 
     def get(self) -> T:
@@ -169,6 +181,7 @@ class Field(Generic[T], CObject):
     def set(self, value: T, *args, force_emit: bool = False, **kwargs):
         if not self._value_to_emit == value or force_emit:
             self._internal_logger.info(f"{self.name} = {value} ({type(value)})")
+            self._set_all_props(value)
             self._set(value, *args, **kwargs)
             self.set_keywords()
             # self.view.value_changed.emit(self.value)
@@ -186,7 +199,6 @@ class Field(Generic[T], CObject):
 
     def _on_keyword_changed(self):
         self.set(self._value_to_emit)
-        # print(f"Field {self.__class__.__name__}._on_keyword_changed called: {self.value}: {str(self.value)}")
         self.view.value_changed.emit(self._value_to_emit)
 
     def _yaml_repr(self):

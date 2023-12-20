@@ -11,7 +11,6 @@ class CSignal:
         self.connections = []
 
     def emit(self, *args, **kwargs):
-        #print(f"CSignal emit: {args}, {kwargs}")
         for connection in self.connections:
             connection()
 

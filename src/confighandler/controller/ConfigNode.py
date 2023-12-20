@@ -193,7 +193,7 @@ class ConfigNode(CObject):
     # ==================================================================================================================
     def _on_field_changed(self):
         # Emit that a field has changed, thus the keywords have changed
-        # print(f"Field changed {self.keywords}")
+       # print(f"Field changed {self.keywords}")
         for attr, val in self.fields.items():
             val: Field
             val._on_keyword_changed()

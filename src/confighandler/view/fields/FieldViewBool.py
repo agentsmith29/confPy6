@@ -41,7 +41,7 @@ class FieldViewBool(FieldView):
     # def _on_keyword_changed(self, keywords):
     #    pass
 
-    def _on_value_changed(self, value):
+    def _on_value_changed_partial(self, value):
         # print(f">>> {self.parent_field.name}: Value changed {value}")
         for edit in self.ui_edit_fields:
             edit: QCheckBox  # Just for typehinting

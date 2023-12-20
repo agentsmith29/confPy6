@@ -39,7 +39,7 @@ class FieldViewTuple(FieldView):
     def _on_text_edited(self, value):
         self.parent_field.set(value)
 
-    def _on_value_changed(self, value):
+    def _on_value_changed_partial(self, value):
         for edit in self.ui_edit_fields:
             edit.setText(str(value))
 

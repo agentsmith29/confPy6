@@ -41,7 +41,7 @@ class FieldViewString(FieldView):
         self.parent_field._internal_logger.debug(f"LineEdit {f} changed to {value}.")
         self.parent_field.set(value)
 
-    def _on_value_changed(self, value):
+    def _on_value_changed_partial(self, value):
         for edit in self.ui_edit_fields:
             edit.setText(value)
         # for tree_item in self.tree_items:

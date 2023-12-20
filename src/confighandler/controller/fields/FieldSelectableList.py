@@ -35,7 +35,6 @@ class FieldSelectableList(ch.Field):
         return self._value.selected_index
 
     def _set(self, value, list = None, description = None):
-        print(f"FieldSelectableList: {value}, {list}, {description}")
         if list is not None:
             self._value = ch.SelectableList(list, selected_index=value, description=description)
             self.csig_field_changed.emit(self._value_to_emit)

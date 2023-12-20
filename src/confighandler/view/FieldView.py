@@ -20,6 +20,7 @@ class FieldView(QWidget):
 
     def __init__(self, parent_field):
         super().__init__()
+
         self.parent_field = parent_field
 
         self.label = None
@@ -33,10 +34,25 @@ class FieldView(QWidget):
             print(">>> String")
 
     def _on_value_changed(self, value):
+        """
+        Updates the UI when the value is changed.
+        :param value:
+        :return:
+        """
+        self._on_value_changed_partial(value)
+
+    def _on_value_changed_partial(self, value):
+        """
+        Additional actions when the value is changed.
+        :param value:
+        :return:
+        """
         raise NotImplementedError()
 
     def add_new_view(self, view: QWidget):
         self.ui_field(view)
+
+
 
     def ui_field(self, view: QWidget) -> QWidget:
         """
