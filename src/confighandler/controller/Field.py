@@ -11,6 +11,8 @@ import re
 from pathlib import Path
 from typing import Generic, T, TypeVar
 
+from PySide6.QtCore import Signal
+
 import confighandler
 from confighandler.controller.CObject import CObject
 from confighandler.controller.CSignal import CSignal
@@ -23,12 +25,12 @@ class FieldData(object):
         self.value = [value, friendly_name, description]
 
 
-
 T = TypeVar('T')
 
 
 class Field(Generic[T], CObject):
 
+    changed = CSignal()
     def __init__(self, value: T, friendly_name: str = None, description: str = None,
                  internal_log=True, internal_log_level=logging.INFO):
         super().__init__()
@@ -88,8 +90,13 @@ class Field(Generic[T], CObject):
         self.props.append((instance, prop))
 
     def _set_all_props(self, value):
+        # deactivate the set function since this can trigger an infinite loop
+        bset = self.set
+        self.set = lambda *args, **kwargs: None
         for inst, prop in self.props:
             prop.fset(inst, value)
+        # Reactive the set function
+        self.set = bset
 
     # ==================================================================================================================
     # Register the field to a configuration
@@ -103,7 +110,6 @@ class Field(Generic[T], CObject):
         :param keywords: The keywords dict
         :param csig_field_changed: The signal that is emitted when the keywords are changed
         """
-
 
         self.name = name
         self.owner = owner
@@ -186,7 +192,11 @@ class Field(Generic[T], CObject):
             self.set_keywords()
             # self.view.value_changed.emit(self.value)
             # This emits a function that notifies the owner that the field has been set
+            self.changed.emit(value)
             self.csig_field_changed.emit()
+
+    def connect(self, func):
+        self.changed.connect(func)
 
     # ==================================================================================================================
     # Things that should happen when the value is changed
@@ -209,4 +219,3 @@ class Field(Generic[T], CObject):
 
     def __repr__(self):
         return str(f"{self.__class__.__name__}")
-

@@ -8,7 +8,7 @@ Description:
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QWidget, QLineEdit
+from PySide6.QtWidgets import QWidget, QLineEdit, QComboBox
 
 from confighandler.view.FieldView import FieldView
 
@@ -17,24 +17,27 @@ class FieldViewList(FieldView):
 
     value_changed = Signal(tuple)
 
-    def __init__(self, parent_field: 'FieldTuple'):
+    def __init__(self, parent_field: 'FieldList'):
         super().__init__(parent_field)
 
-    def ui_field(self, view: QLineEdit = None) -> QLineEdit:
+    def ui_field(self, view: QLineEdit | QComboBox = None) -> QLineEdit:
         """
 
         """
         if view is None:
             le = QLineEdit(str(self.parent_field.value))
-        else:
-            le: QLineEdit = view
         le.setToolTip(f"({self.parent_field.name}) {self.parent_field._description}")
-        self.ui_edit_fields.append(le)
-        self.ui_edit_fields[-1].textEdited.connect(self._on_text_edited)
-        # self.ui_edit_fields[-1] : QtWidgets.QLineEdit
-        self.ui_edit_fields[-1].editingFinished.connect(self._on_edited_finished)
-        # new
-        return self.ui_edit_fields[-1]
+        if isinstance(view, QLineEdit):
+            le: QLineEdit = view
+
+            self.ui_edit_fields.append(le)
+            self.ui_edit_fields[-1].textEdited.connect(self._on_text_edited)
+            # self.ui_edit_fields[-1] : QtWidgets.QLineEdit
+            self.ui_edit_fields[-1].editingFinished.connect(self._on_edited_finished)
+            # new
+            return self.ui_edit_fields[-1]
+        elif isinstance(view, QComboBox):
+            cb: QComboBox = view
 
     def _on_text_edited(self, value):
         self.parent_field.set(value)

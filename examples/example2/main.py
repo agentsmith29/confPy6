@@ -3,15 +3,23 @@ import sys
 import time
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTreeWidget
 from rich.logging import RichHandler
 
 from ApplicationConfig import ApplicationConfig
 
 class TestClass:
-    signal = Signal(int)
-    def __init__(self):
+
+    def _decorator(foo):
+        def magic(self):
+            print("start magic")
+            foo(self)
+            print("end magic")
+
+        return magic
+    def __init__(self, config: ApplicationConfig):
+        self.config = config
         self._wafer = 0
 
     @property
@@ -21,9 +29,12 @@ class TestClass:
     @wafer.setter
     def wafer(self, value):
         self._wafer = value
+        self.config.wafer_list1.set(value)
         print("Wafer changed to", value)
-        self.signal.emit(value)
+        #self.signal.emit(value)
 
+def test(*args, **kwargs):
+    print(f"test: {args}, {kwargs}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -31,10 +42,11 @@ if __name__ == "__main__":
     # setup the logging module
 
     config = ApplicationConfig()
-    testclass = TestClass()
+    testclass = TestClass(config)
     time.sleep(1)
     #config.autosave(enable=True, path='./configs_autosave')
-    (config.load('./configs/ApplicationConfig.yaml'))
+    config.load('./configs/ApplicationConfig.yaml')
+    config.autosave(enable=True, path='./')
     #print(config.wafer_version)
     #config.wafer_version.get()
     #config.wafer_number.get()
@@ -69,7 +81,7 @@ if __name__ == "__main__":
     config.wafer_list1.view.add_new_view(combo)
 
 
-    config.wafer_list1.connect_property(testclass, TestClass.wafer)
+    config.wafer_list1.connect(test)
     
     window.setCentralWidget(wdg)
     #print(config.load('config.yaml'))
@@ -81,5 +93,4 @@ if __name__ == "__main__":
     # config.wafer_nr = "1234"
 
     # config.save("test.yaml")
-
 

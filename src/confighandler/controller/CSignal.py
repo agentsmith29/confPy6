@@ -12,7 +12,7 @@ class CSignal:
 
     def emit(self, *args, **kwargs):
         for connection in self.connections:
-            connection()
+            connection(*args, **kwargs)
 
     def connect(self, func: callable):
         self.connections.append(func)
