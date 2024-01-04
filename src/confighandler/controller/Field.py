@@ -11,8 +11,6 @@ import re
 from pathlib import Path
 from typing import Generic, T, TypeVar
 
-from PySide6.QtCore import Signal
-
 import confighandler
 from confighandler.controller.CObject import CObject
 from confighandler.controller.CSignal import CSignal

@@ -10,6 +10,7 @@ import os
 
 from rich.logging import RichHandler
 
+
 class CObject:
 
     def __init__(self, name: str = ""):

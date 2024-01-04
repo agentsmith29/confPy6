@@ -8,7 +8,7 @@ Description:
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QLineEdit, QSpinBox
+from PySide6.QtWidgets import QSpinBox
 
 from confighandler.view.FieldView import FieldView
 

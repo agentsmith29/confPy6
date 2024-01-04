@@ -9,7 +9,6 @@ import re
 from ast import literal_eval
 
 import confighandler as ch
-from confighandler.controller.Field import T
 
 
 class FieldSelectableList(ch.Field):

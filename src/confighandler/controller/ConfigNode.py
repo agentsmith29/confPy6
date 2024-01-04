@@ -7,19 +7,15 @@ Description:
 """
 
 import datetime
-import logging
+import pathlib
 
 import yaml
-from PySide6.QtWidgets import QMessageBox
-from rich.logging import RichHandler
 
 from .CObject import CObject
 from .CSignal import CSignal
 from .Field import Field
 from ..view.ConfigView import ConfigView
 
-import pathlib
-import rich
 
 class ConfigNode(CObject):
     field_changed = CSignal()

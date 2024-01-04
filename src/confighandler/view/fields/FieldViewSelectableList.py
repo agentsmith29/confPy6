@@ -6,13 +6,12 @@ Package Version: 0.0.1
 Description:
 """
 
-from PySide6 import QtWidgets, QtCore
+from PySide6 import QtCore
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QWidget, QLineEdit, QComboBox, QVBoxLayout, QLabel, QPushButton, QMenu
 
 import confighandler as ch
-
 
 
 class FieldViewAddEntry(QWidget):

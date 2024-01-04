@@ -6,9 +6,8 @@ Package Version: 0.0.1
 Description:
 """
 
-from PySide6 import QtWidgets
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QWidget, QLineEdit, QComboBox
+from PySide6.QtWidgets import QLineEdit, QComboBox
 
 from confighandler.view.FieldView import FieldView
 
