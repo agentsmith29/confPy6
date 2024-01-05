@@ -13,8 +13,8 @@ from LaserConfig import LaserConfig
 
 class ApplicationConfig(cfg.ConfigNode):
 
-    def __init__(self, internal_log=True, internal_log_level= logging.DEBUG) -> None:
-        super().__init__(internal_log=internal_log, internal_log_level=internal_log_level)
+    def __init__(self) -> None:
+        super().__init__()
 
         # self.output_directory: cfg.Field[Path] = cfg.Field(Path("C:\\{wafer_list1}"))
         #

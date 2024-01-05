@@ -7,6 +7,8 @@ Description:
 """
 
 import datetime
+import logging
+import os
 import pathlib
 
 import yaml
@@ -22,17 +24,15 @@ class ConfigNode(CObject):
 
     cur_time = datetime.datetime.now()
 
-    def __init__(self, internal_log, internal_log_level):
-        super().__init__()
+    def __init__(self, module_log=True, module_log_level=logging.WARNING):
+        super().__init__(module_log, module_log_level)
 
         self._autosave = False
-
-
-
         self.name = self.__class__.__name__
-        self.logger, self.log_handler = self.create_new_logger(self.name)
-        self.internal_log_enabled = internal_log
-        self.internal_log_level = internal_log_level
+        self.config_file: pathlib.Path = pathlib.Path(f"./{self.name}.yaml")
+
+
+        self.logger = self.create_new_logger(self.name)
 
         self.owner = None
         self._level = 0
@@ -48,8 +48,6 @@ class ConfigNode(CObject):
         }
 
         self.field_changed.connect(self._on_field_changed)
-
-
 
     # ==================================================================================================================
     #
@@ -102,24 +100,56 @@ class ConfigNode(CObject):
 
     def deserialize(self, content):
         """Deserializes the content of the config based on the yaml file"""
-        self._internal_logger.info(f"Deserializing {content}")
+        self._module_logger.info(f"Deserializing {content}")
         for attr, val in content.items():
             # Check if the attribute is not of type GenericConfig
             # therefore get the attribute type of this class
             # print(f"Parsing {attr} with content: {val}")
             if attr == self.name:
-                print(f"Found own config")
                 self.deserialize(val)
             elif attr in self.__dict__:
                 if not isinstance(getattr(self, attr), ConfigNode):
-                    self._internal_logger.info(f"Deserializing field {attr} with content: {val}")
+                    self._module_logger.info(f"Deserializing field {attr} with content: {val}")
                     val = getattr(self, attr)._field_parser(val)
                     getattr(self, attr).set(**val, force_emit=True)
                 else:
-                    self._internal_logger.info(f"Deserializing config {attr} with content: {val}")
+                    self._module_logger.info(f"Deserializing config {attr} with content: {val}")
                     getattr(self, attr).deserialize(val)
 
+    @property
+    def module_log_level(self):
+        return self._module_logger.level
 
+    @module_log_level.setter
+    def module_log_level(self, level: int) -> None:
+        self._module_logger.setLevel(level)
+        for attr, val in self.__dict__.items():
+            if isinstance(val, Field):
+                self.fields[attr] = val
+                val.module_log_level = self.module_log_level
+    @property
+    def module_log_enabled(self):
+        return not self._module_logger.disabled
+
+    @module_log_enabled.setter
+    def module_log_enabled(self, enable: bool) -> None:
+        """
+        Enables or disables internal logging. If disabled, the internal logger will be disabled and no messages will be
+        emitted to the state queue.
+        :param enable: True to enable, False to disable
+        """
+        if enable:
+            self._module_logger.disabled = False
+            self._module_logger.debug(
+                f"Logger {self._module_logger.name} enabled (Level {self._module_logger.level}).")
+        else:
+            self._module_logger.debug(f"Logger {self._module_logger.name} disabled.")
+            self._module_logger.disabled = True
+
+        for attr, val in self.__dict__.items():
+            if isinstance(val, Field):
+                self.fields[attr] = val
+                val.module_log_enabled = self.module_log_enabled
 
 
     # ==================================================================================================================
@@ -136,8 +166,8 @@ class ConfigNode(CObject):
                 self.fields[attr] = val
                 # val.register(self.keywords, self.view.keywords_changed)
                 val.register(self.__class__.__name__, attr, self.keywords, self.field_changed)
-                val.internal_log_enabled = self.internal_log_enabled
-                val.internal_log_level = self.internal_log_level
+                val.module_log_enabled = self.module_log_enabled
+                val.module_log_level = self.module_log_level
         self.view.keywords_changed.emit(self.keywords)
 
     def _register_config(self):
@@ -153,51 +183,57 @@ class ConfigNode(CObject):
     # I/O Operations
     # ==================================================================================================================
     def save(self, file: str=None, background_save=True):
-        if file is None:
-            file = f"{self._path}/{self.__class__.__name__}.yaml"
+        if file is not None:
+            self.config_file = pathlib.Path(file)
         # write the string to a file
-        with open(file, 'w+') as stream:
+        with open(self.config_file, 'w+') as stream:
             stream.write(self.serialize())
-            # print(self.serialize())
+
         if not background_save:
-            self._internal_logger.debug(f"Saved config to {file}")
-        # with open(file, 'w+') as stream:
-        #    yaml.dump(self, stream) # Dump it as a xaml file
-        # with open(file, 'w+') as stream:
-        #    stream.write(
-        # print(self._dump(cfg))
+            self._module_logger.debug(f"Saved config to {file}")
+
 
     def autosave(self, enable: bool = False, path: str = None):
         self._autosave = enable
         if self._autosave:
-            if path is None:
-                self._path = pathlib.Path(".")
-            else:
-                self._path = pathlib.Path(path)
-                # Check if the path exists otherwise create it
-                if not self._path.exists():
-                    self._path.mkdir(parents=True, exist_ok=True)
+            if path is not None:
+                # Check if the given path is a file or folder
+                _path = pathlib.Path(f"./{path}")
+                if _path.suffix == "" or path[-1].strip() == "/":
+                    self.config_file = pathlib.Path(_path) / f"{self.name}.yaml"
+                else:
+                    self.config_file = pathlib.Path(_path)
+                self.config_file.parent.mkdir(parents=True, exist_ok=True)
 
-    def load(self, file: str):
+                self._module_logger.info(
+                    f"Autosave enabled. File will be saved to  {self.config_file.absolute().as_posix()}")
+                # Check if the path exists otherwise create it
+
+
+    def load(self, file: str, as_auto_save: bool = False):
         # load the yaml file
-        with open(file, 'r') as stream:
+        _file = pathlib.Path(file)
+        self._module_logger.info(f"Loading config from {_file}")
+        with open(str(_file.absolute().as_posix()), 'r') as stream:
             content = yaml.load(stream, Loader=yaml.FullLoader)
         self.deserialize(content)
+
+        if as_auto_save:
+            self._module_logger.debug(f"Configuration will be saved to {file}")
+            self.config_file = pathlib.Path(file)
 
     # ==================================================================================================================
     # Functions that happens on a change
     # ==================================================================================================================
     def _on_field_changed(self, *args, **kwargs):
         # Emit that a field has changed, thus the keywords have changed
-       # print(f"Field changed {self.keywords}")
         for attr, val in self.fields.items():
             val: Field
             val._on_keyword_changed()
-
         if self._level == 0 and self._autosave:
-                file = f"{self._path}/{self.__class__.__name__}.yaml"
-                # Saves on every field change
-                self.save(file=file, background_save=True)
 
+            # Saves on every field change
+            self.save(file=str(self.config_file.as_posix()), background_save=True)
+            #self._module_logger.debug(f"Autosave to {self.config_file.absolute().as_posix()}")
 
 

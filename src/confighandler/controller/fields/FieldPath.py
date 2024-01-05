@@ -37,10 +37,10 @@ class FieldPath(Field):
         # Overwritten function, to replace the @Path keyword
         match = re.findall(r'@Path:<([^>]*)>', val)
         if len(match) > 0:
-            self._internal_logger.info(f"Found @Path: {val}. Check syntax, multiple @Path: are not allowed in one field.")
+            self._module_logger.info(f"Found @Path: {val}. Check syntax, multiple @Path: are not allowed in one field.")
             return {"value": Path(match[0])}
         elif len(match) == 0:
-            self._internal_logger.debug(f"No @Path: found in {val}. Please check field.")
+            self._module_logger.debug(f"No @Path: found in {val}. Please check field.")
             return {"value": Path('./')}
     def __str__(self):
         return str(Path(self.value).as_posix())

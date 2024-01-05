@@ -3,15 +3,17 @@ import sys
 import time
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTreeWidget
 from rich.logging import RichHandler
 
 from ApplicationConfig import ApplicationConfig
 
-class TestClass:
+class TestClass(QObject):
     signal = Signal(int)
     def __init__(self):
+        self.logger = logging.getLogger(f"{__name__} - fallback")
+        super().__init__()
         self._wafer = 0
 
     @property
@@ -21,7 +23,7 @@ class TestClass:
     @wafer.setter
     def wafer(self, value):
         self._wafer = value
-        print("Wafer changed to", value)
+        self.logger.info(f"Wafer changed to {value}")
         self.signal.emit(value)
 
 
@@ -29,12 +31,18 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # setup the logging module
+    FORMAT = "%(name)s %(message)s"
+    logging.basicConfig(
+        level=logging.DEBUG, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+    )
 
     config = ApplicationConfig()
+    config.module_log_enabled = False
+    config.module_log_level = logging.DEBUG
     testclass = TestClass()
     time.sleep(1)
-    #config.autosave(enable=True, path='./configs_autosave')
-    (config.load('./configs/ApplicationConfig.yaml'))
+    config.autosave(enable=True, path='./configs_autosave/ApplicationConfig.yaml')
+    (config.load('./configs/ApplicationConfig.yaml', as_auto_save=True))
     #print(config.wafer_version)
     #config.wafer_version.get()
     #config.wafer_number.get()

@@ -30,14 +30,13 @@ class Field(Generic[T], CObject):
 
     changed = CSignal()
     def __init__(self, value: T, friendly_name: str = None, description: str = None,
-                 internal_log=True, internal_log_level=logging.INFO):
-        super().__init__()
-        self.internal_log_enabled = internal_log
-        self.internal_log_level = internal_log_level
+                 module_log=True, module_log_level=logging.WARNING):
+        super().__init__(module_log, module_log_level)
 
-        self.logger, self.log_handler = self.create_new_logger(self.name)
+        self.field_name = self.__class__.__name__
+        self.logger = self.create_new_logger(self.name)
 
-        self._data = FieldData(self.name, value, friendly_name, description)
+        self._data = FieldData(self.field_name, value, friendly_name, description)
 
         self._friendly_name: str = friendly_name
         self._description: str = description
@@ -51,7 +50,7 @@ class Field(Generic[T], CObject):
         # Connected properties that should bet set if the field changes
         self.props = []
 
-        self._internal_logger.debug(f"Field {self.__class__.__name__} created with value {value} of type {type(value)}")
+        self._module_logger.debug(f"Field {self.field_name} created with value {value} of type {type(value)}")
 
     def __new__(cls, value, friendly_name: str = None, description: str = None):
         # print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
@@ -82,7 +81,7 @@ class Field(Generic[T], CObject):
 
     def serialize(self):
         """Used for serializing instances. Returns the current field as a yaml-line."""
-        return f"{self.name}: {self._yaml_repr()} # {self.friendly_name}: {self.description}"
+        return f"{self.name}.{self.field_name}: {self._yaml_repr()} # {self.friendly_name}: {self.description}"
 
     def connect_property(self, instance, prop: property):
         self.props.append((instance, prop))
@@ -99,23 +98,20 @@ class Field(Generic[T], CObject):
     # ==================================================================================================================
     # Register the field to a configuration
     # ==================================================================================================================
-    def register(self, owner, name, keywords, csig_field_changed: CSignal):
+    def register(self, owner, field_name, keywords, csig_field_changed: CSignal):
         """
         Register the keyword for the field. This is used for updating the keywords when the value is changed.
         Should only be called from a configuration class
         :param owner: The owner (parent) of the field
-        :param name: The name of the field
+        :param field_name: The name of the field
         :param keywords: The keywords dict
         :param csig_field_changed: The signal that is emitted when the keywords are changed
         """
 
-        self.name = name
+        self.field_name = field_name
         self.owner = owner
-        formatter = logging.Formatter(f'%(name)s [{self.name}] %(message)s')
-
-        self._internal_log_handler.setFormatter(formatter)
         if self._friendly_name is None:
-            self._friendly_name = self.name
+            self._friendly_name = self.field_name
 
         # Assigns the global keywords dict to the field
         self.keywords = keywords
@@ -124,8 +120,8 @@ class Field(Generic[T], CObject):
         # self.keywords_changed = keyword_changed
         # self.keywords_changed.connect(self._on_keyword_changed)
         self.set_keywords()
-        self._internal_logger.info(f"Field '{self.name}' assigned to {self.owner}")
-
+        self._module_logger.info(f"Field '{self.field_name}' assigned to {self.owner}")
+        self._module_logger.name = f"(cfg) {self.name}.{self.field_name}"
     # ==================================================================================================================
     # Set the keywords for the field
     # ==================================================================================================================
@@ -133,7 +129,7 @@ class Field(Generic[T], CObject):
         """Set the keywords for the field. Also updates the keywords dict if a value of a field is changed."""
         # self.keywords["{" + self.name + "}"] = self.value
         # self._internal_logger.info(f"Setting keywords for {self.name} to {self.value}")
-        self.keywords[self.name] = str(self.value).replace(' ', '_').replace('.', '_').replace(',', '_')
+        self.keywords[self.field_name] = str(self.value).replace(' ', '_').replace('.', '_').replace(',', '_')
         self.csig_field_changed.emit()
 
     def replace_keywords(self, fr: str):
@@ -184,7 +180,7 @@ class Field(Generic[T], CObject):
 
     def set(self, value: T, *args, force_emit: bool = False, **kwargs):
         if not self._value_to_emit == value or force_emit:
-            self._internal_logger.info(f"{self.name} = {value} ({type(value)})")
+            self._module_logger.info(f"{self.field_name} = {value} ({type(value)})")
             self._set_all_props(value)
             self._set(value, *args, **kwargs)
             self.set_keywords()
