@@ -43,6 +43,6 @@ class FieldViewInt(FieldView):
     #    pass
 
     def _on_value_changed_partial(self, value):
-        #print(f">>> {self.parent_field.name}: Value changed {value}")
+
         for edit in self.ui_edit_fields:
             edit.setValue(int(value))

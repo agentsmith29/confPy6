@@ -1,6 +1,6 @@
 [project]
 name = "confighandler"
-version = "1.2.0"
+version = "1.2.1"
 authors = [
   { name="Christoph Schmidt", email="cschmidt.fs@gmail.com" },
 ]
