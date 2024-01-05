@@ -81,7 +81,7 @@ class Field(Generic[T], CObject):
 
     def serialize(self):
         """Used for serializing instances. Returns the current field as a yaml-line."""
-        return f"{self.name}.{self.field_name}: {self._yaml_repr()} # {self.friendly_name}: {self.description}"
+        return f"{self.field_name}: {self._yaml_repr()} # {self.friendly_name}: {self.description}"
 
     def connect_property(self, instance, prop: property):
         self.props.append((instance, prop))
