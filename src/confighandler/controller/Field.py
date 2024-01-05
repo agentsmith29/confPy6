@@ -27,8 +27,8 @@ T = TypeVar('T')
 
 
 class Field(Generic[T], CObject):
-
     changed = CSignal()
+
     def __init__(self, value: T, friendly_name: str = None, description: str = None,
                  module_log=True, module_log_level=logging.WARNING):
         super().__init__(module_log, module_log_level)
@@ -37,7 +37,7 @@ class Field(Generic[T], CObject):
         self.logger = self.create_new_logger(self.name)
 
         self._data = FieldData(self.field_name, value, friendly_name, description)
-
+        self._allowed_types = None
         self._friendly_name: str = friendly_name
         self._description: str = description
         self._value: T = value
@@ -122,6 +122,7 @@ class Field(Generic[T], CObject):
         self.set_keywords()
         self._module_logger.info(f"Field '{self.field_name}' assigned to {self.owner}")
         self._module_logger.name = f"(cfg) {self.name}.{self.field_name}"
+
     # ==================================================================================================================
     # Set the keywords for the field
     # ==================================================================================================================
@@ -178,11 +179,47 @@ class Field(Generic[T], CObject):
     def get(self) -> T:
         return self.replace_keywords(self.value)
 
+    def check_type(self, value):
+        type_allowed = False
+
+        if isinstance(value, self._allowed_types[0]):
+            return value
+
+        if self._allowed_types is None:
+            raise TypeError(f"No allowed types for {self.__class__.__name__}")
+
+
+        if not isinstance(self._allowed_types, tuple) or len(self._allowed_types) < 2:
+            raise TypeError(f"Allowed types not defined correctly for {self.__class__.__name__}")
+
+        if self._allowed_types[1] is None:
+            # If the list is None, no other types are allowed (e.g. strings)
+            if isinstance(value, self._allowed_types[0]):
+                print(f"Convert to first {self._allowed_types[0]}")
+                type_allowed = True
+        elif len(self._allowed_types[1]) == 0:
+            # If the list is empty, all types are allowed (e.g. strings)
+            type_allowed = True
+
+        else:
+
+            for t in self._allowed_types[1]:
+                if isinstance(value, t):
+                    type_allowed = True
+
+        # No valid type has been found
+        if not type_allowed:
+            raise TypeError(f"Value must be of type {self._allowed_types[0]}, not {type(value)}")
+        else:
+            # Valid type found, convert to first arg
+            value = self._allowed_types[0](value)
+
+        return value
+
     def set(self, value: T, *args, force_emit: bool = False, **kwargs):
         # typecheck
-        if not isinstance(value, type(self.value)):
-            raise TypeError(f"Value must be of type {type(self.value)}, not {type(value)}")
-
+        # Check if allowd types are set
+        value = self.check_type(value)
         if not self._value_to_emit == value or force_emit:
             self._module_logger.info(f"{self.field_name} = {value} ({type(value)})")
             self._set_all_props(value)

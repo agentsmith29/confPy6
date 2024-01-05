@@ -14,6 +14,7 @@ class FieldTuple(Field):
     def __init__(self, value: tuple, friendly_name: str = None, description: str = None):
         super().__init__(value, friendly_name, description)
         self.view = FieldViewTuple(self)
+        self._allowed_types = (tuple, None)
 
     def _yaml_repr(self):
         return str(self.value)

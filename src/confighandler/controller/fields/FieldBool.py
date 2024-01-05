@@ -14,6 +14,7 @@ class FieldBool(Field):
     def __init__(self, value: bool, friendly_name: str = None, description: str = None):
         super().__init__(value, friendly_name, description)
         self.view = FieldViewBool(self)
+        self._allowed_types = (bool, [int])
 
     def _yaml_repr(self):
         return bool(self.value)

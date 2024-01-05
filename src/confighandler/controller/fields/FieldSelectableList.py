@@ -15,6 +15,7 @@ class FieldSelectableList(ch.Field):
     def __init__(self, value: ch.SelectableList, friendly_name: str = None, description: str = None):
         super().__init__(value, friendly_name, description)
         self.view = ch.FieldViewSelectableList(self)
+        self._allowed_types = (list, [tuple])
 
     def get_list(self) -> list:
         return list(self._value)

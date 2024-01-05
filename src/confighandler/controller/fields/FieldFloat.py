@@ -14,6 +14,7 @@ class FieldFloat(Field):
     def __init__(self, value: float, friendly_name: str = None, description: str = None):
         super().__init__(value, friendly_name, description)
         self.view = FieldViewFloat(self)
+        self._allowed_types = (int, [float])
 
     def _yaml_repr(self):
         return float(self.value)

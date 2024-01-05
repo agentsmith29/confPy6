@@ -15,6 +15,7 @@ class FieldString(Field):
         super().__init__(value, friendly_name, description)
         self._value_replaced_keywords = self.replace_keywords(self.value)
         self.view = FieldViewString(self)
+        self._allowed_types = (str, [])
 
     def _yaml_repr(self):
         return f"\"{self.value}\""
