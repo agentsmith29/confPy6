@@ -27,7 +27,7 @@ class FieldViewBool(FieldView):
             dsp = QCheckBox()
         else:
             dsp: QCheckBox = view
-        dsp.setToolTip(f"({self.parent_field.name}) {self.parent_field._description}")
+        dsp.setToolTip(f"({self.parent_field.field_name}) {self.parent_field._description}")
         dsp.setChecked(self.parent_field.value)
         self.ui_edit_fields.append(dsp)
         self.ui_edit_fields[-1].stateChanged.connect(self._on_state_changed)

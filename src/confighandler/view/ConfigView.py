@@ -23,6 +23,7 @@ class ConfigView(QObject):
     # UI handling
     # ==================================================================================================================
     def widget(self):
+        self.parent._module_logger.debug("Creating widget for config view.")
         widget = QWidget()
         widget.setLayout(self._create_config_layout())
         return widget

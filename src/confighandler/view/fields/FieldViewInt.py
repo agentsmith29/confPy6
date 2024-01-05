@@ -28,7 +28,7 @@ class FieldViewInt(FieldView):
             dsp = QtWidgets.QSpinBox()
         else:
             dsp: QSpinBox = view
-        dsp.setToolTip(f"({self.parent_field.name}) {self.parent_field._description}")
+        dsp.setToolTip(f"({self.parent_field.field_name}) {self.parent_field._description}")
         dsp.setRange(-100000, 100000)
         dsp.setValue(self.parent_field.value)
         self.ui_edit_fields.append(dsp)

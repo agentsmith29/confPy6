@@ -5,7 +5,7 @@ Created: 2023-10-19 12:35
 Package Version: 0.0.1
 Description:
 """
-
+import os
 from pathlib import Path
 
 from PySide6 import QtWidgets
@@ -23,6 +23,7 @@ class FieldViewPath(FieldView):
         self.ui_edit_fields_lbl = []
         self.ui_edit_fields_wdg = []
         self.ui_btn_opens = []
+        self.ui_btn_creates = []
 
     def ui_field(self, view: QLineEdit = None) -> QWidget:
         """
@@ -37,7 +38,15 @@ class FieldViewPath(FieldView):
             le = QLineEdit(str(self.parent_field.value), parent=self)
         else:
             le: QLineEdit = view
-        le.setToolTip(f"({self.parent_field.name}) {self.parent_field._description}")
+
+        if not Path(self.parent_field.get()).exists():
+            le.setStyleSheet("border: 1px solid red")
+        else:
+            le.setStyleSheet("border: 1px solid green")
+
+        #self.parent_field.set(self.parent_field.value)
+        le.setToolTip(f"({self.parent_field.field_name}) {self.parent_field._description}\n"
+                      f"Value: {self.parent_field.value}")
         self.ui_edit_fields_lbl.append(QtWidgets.QLabel(str(self.parent_field.get()), parent=self))
         self.ui_edit_fields.append(le)
 
@@ -48,8 +57,14 @@ class FieldViewPath(FieldView):
         self.ui_btn_opens[-1].clicked.connect(
             lambda: self._on_btn_clicked(self.ui_btn_opens[-1]))
 
+        btn_create = QtWidgets.QPushButton("+")
+        self.ui_btn_creates.append(btn_create)
+        self.ui_btn_creates[-1].clicked.connect(
+            lambda: self._on_btn_create_clicked(self))
+
         grd.addWidget(self.ui_edit_fields[-1], 0, 0)
         grd.addWidget(btn_open, 0, 1)
+        grd.addWidget(btn_create, 0, 2)
         grd.addWidget(self.ui_edit_fields_lbl[-1], 1, 0, 1, 2)
 
         self.parent_field._module_logger.info(f"Registered QEditField for {self.ui_edit_fields[-1]}")
@@ -59,13 +74,39 @@ class FieldViewPath(FieldView):
         self.ui_edit_fields_wdg.append(wdg)
         return self.ui_edit_fields_wdg[-1]
 
+    def find_mount_point(self, path):
+        path = os.path.abspath(path)
+        while not os.path.ismount(path):
+            path = os.path.dirname(path)
+        return path
+
     def _on_btn_clicked(self, parent: QWidget):
         # create a file dialog to select a folder
         self.dlg = QFileDialog()
         self.dlg.setFileMode(QFileDialog.Directory)
         f = self.dlg.getExistingDirectory(parent)
-        self.parent_field.set(str(Path(f).absolute()))
-        # print(f)
+        # Abort if nothing is selected
+        if f == "":
+            return
+
+        path = Path(f)
+        print(path)
+        if self.find_mount_point(path) != self.find_mount_point(Path.cwd()):
+            self.parent_field.set(str(path.absolute().as_posix()))
+        else:
+            rel_path = os.path.relpath(path.absolute().as_posix(), Path.cwd())
+            flen = len(rel_path.split('..'))
+            print(flen)
+            if flen > 3:
+                self.parent_field.set(str(path.absolute().as_posix()))
+            else:
+                self.parent_field.set(str(
+                    Path(rel_path).as_posix()
+                    )
+                )
+
+    def _on_btn_create_clicked(self, p: QWidget):
+        self.parent_field.create_folder()
 
     def _on_text_edited(self, value):
         self.parent_field.set(value)
@@ -73,11 +114,13 @@ class FieldViewPath(FieldView):
     def _on_value_changed_partial(self, value: Path):
         # print(value)
         # Check if path exists
-        for edit, lbl in zip(self.ui_edit_fields, self.ui_edit_fields_lbl):
-            if not Path(value).exists():
+        for edit, lbl, btn_open in zip(self.ui_edit_fields, self.ui_edit_fields_lbl, self.ui_btn_creates):
+            if not Path(self.parent_field.get()).exists():
                 edit.setStyleSheet("border: 1px solid red")
+                btn_open.setEnabled(True)
             else:
                 edit.setStyleSheet("border: 1px solid green")
+                btn_open.setEnabled(False)
             edit.setText(
                 str(self.parent_field.value)
             )

@@ -42,5 +42,18 @@ class FieldPath(Field):
         elif len(match) == 0:
             self._module_logger.debug(f"No @Path: found in {val}. Please check field.")
             return {"value": Path('./')}
+
+    def create_folder(self):
+        print(f"Creating folder {self.get()}")
+        # Check if path exists
+        if not Path(self.get()).exists():
+            Path(self.get()).mkdir(parents=True, exist_ok=True)
+        # Check if path is now exists
+        if Path(self.get()).exists():
+            self._module_logger.info(f"Folder {self.get()} created.")
+        else:
+            self._module_logger.error(f"Folder {self.get()} could not be created.")
+        self.csig_field_changed.emit()
+
     def __str__(self):
         return str(Path(self.value).as_posix())

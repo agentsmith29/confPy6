@@ -179,6 +179,10 @@ class Field(Generic[T], CObject):
         return self.replace_keywords(self.value)
 
     def set(self, value: T, *args, force_emit: bool = False, **kwargs):
+        # typecheck
+        if not isinstance(value, type(self.value)):
+            raise TypeError(f"Value must be of type {type(self.value)}, not {type(value)}")
+
         if not self._value_to_emit == value or force_emit:
             self._module_logger.info(f"{self.field_name} = {value} ({type(value)})")
             self._set_all_props(value)
