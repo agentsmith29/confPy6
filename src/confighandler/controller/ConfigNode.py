@@ -62,7 +62,7 @@ class ConfigNode(CObject):
         # start with a copy so we don't accidentally modify the object state
         # or cause other conflicts
         state = self.__dict__.copy()
-        print(state)
+        #print(state)
         # remove the unpicklable entries
         # del state['keywords_changed']
 
