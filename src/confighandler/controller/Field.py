@@ -209,7 +209,7 @@ class Field(Generic[T], CObject):
 
         # No valid type has been found
         if not type_allowed:
-            raise TypeError(f"Value must be of type {self._allowed_types[0]}, not {type(value)}")
+            raise TypeError(f"Value for field {self.field_name} must be of type {self._allowed_types[0]}, not {type(value)}")
         else:
             # Valid type found, convert to first arg
             value = self._allowed_types[0](value)
