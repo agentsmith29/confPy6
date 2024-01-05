@@ -46,7 +46,7 @@ class FieldSelectableList(ch.Field):
 
     def serialize(self):
         """Used for serializing instances. Returns the current field as a yaml-line."""
-        return f"{self.name}: {self._yaml_repr()} # -> {self.value} # {self.friendly_name}: {self.description}"
+        return f"{self.field_name}: {self._yaml_repr()} # -> {self.value} # {self.friendly_name}: {self.description}"
 
     def _field_parser(self, val):
         pattern = r'<(\d+)>\s*\[(.*?)\]'
