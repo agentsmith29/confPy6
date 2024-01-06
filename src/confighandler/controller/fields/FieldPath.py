@@ -19,14 +19,13 @@ class FieldPath(Field):
 
     def __init__(self, value: str, friendly_name: str = None, description: str = None):
         super().__init__(value, friendly_name, description)
-        # self._value_replaced_keywords = self.replace_keywords(self.value)
-        self.view = FieldViewPath(self)
         self._input = self.value
         self._allowed_types = (Path, [pathlib.PurePosixPath, pathlib.PurePath,
                                       pathlib.PureWindowsPath,
                                       str])
-        # self.ui_btn_opens = []
 
+    def create_view(self):
+        return FieldViewPath(self)
     # ==================================================================================================================
     # Getter and Setter for value retrival
     # ==================================================================================================================

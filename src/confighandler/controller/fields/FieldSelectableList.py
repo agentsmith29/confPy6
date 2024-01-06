@@ -14,8 +14,11 @@ import confighandler as ch
 class FieldSelectableList(ch.Field):
     def __init__(self, value: ch.SelectableList, friendly_name: str = None, description: str = None):
         super().__init__(value, friendly_name, description)
-        self.view = ch.FieldViewSelectableList(self)
+
         self._allowed_types = (int, None)
+
+    def create_view(self):
+        return ch.FieldViewSelectableList(self)
 
     def get_list(self) -> list:
         return list(self._value)

@@ -8,8 +8,11 @@ Description:
 
 import logging
 import re
+from abc import abstractmethod
 from pathlib import Path
 from typing import Generic, T, TypeVar
+
+from PySide6.QtWidgets import QApplication
 
 import confighandler
 from confighandler.controller.CObject import CObject
@@ -45,12 +48,18 @@ class Field(Generic[T], CObject):
         self.keywords = {}
 
         # The view, usd for handling the UI
-        self.view = FieldView(self)
-
+        if QApplication.instance() is not None:
+            self.view = self.create_view()
+        else:
+            self.view = None
         # Connected properties that should bet set if the field changes
         self.props = []
 
         self._module_logger.debug(f"Field {self.field_name} created with value {value} of type {type(value)}")
+
+    @abstractmethod
+    def create_view(self):
+        return FieldView(self)
 
     def __new__(cls, value, friendly_name: str = None, description: str = None):
         # print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
@@ -188,7 +197,6 @@ class Field(Generic[T], CObject):
         if self._allowed_types is None:
             raise TypeError(f"No allowed types for {self.__class__.__name__}")
 
-
         if not isinstance(self._allowed_types, tuple) or len(self._allowed_types) < 2:
             raise TypeError(f"Allowed types not defined correctly for {self.__class__.__name__}")
 
@@ -209,7 +217,8 @@ class Field(Generic[T], CObject):
 
         # No valid type has been found
         if not type_allowed:
-            raise TypeError(f"Value for field {self.field_name} must be of type {self._allowed_types[0]}, not {type(value)}")
+            raise TypeError(
+                f"Value for field {self.field_name} must be of type {self._allowed_types[0]}, not {type(value)}")
         else:
             # Valid type found, convert to first arg
             value = self._allowed_types[0](value)
@@ -244,7 +253,8 @@ class Field(Generic[T], CObject):
 
     def _on_keyword_changed(self):
         self.set(self._value_to_emit)
-        self.view.value_changed.emit(self._value_to_emit)
+        if self.view is not None:
+            self.view.value_changed.emit(self._value_to_emit)
 
     def _yaml_repr(self):
         raise NotImplementedError()
