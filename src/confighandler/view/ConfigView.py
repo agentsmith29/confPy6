@@ -8,6 +8,7 @@ Description:
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Signal, QObject
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QLabel
 
 import confighandler
@@ -33,7 +34,7 @@ class ConfigView(QObject):
     def ui_tree_widget_item(self, tree_widget, max_level=1):
         top_item = QtWidgets.QTreeWidgetItem()
         top_item.setText(0, f"{self.parent.name}")
-
+        top_item.setIcon(0, QIcon(":/icons-bw/icons/single-color/cli-settings.svg"))
         for attr, val in self.parent.fields.items():
             item, le = val.view.ui_tree_widget_item()
             top_item.addChild(item)

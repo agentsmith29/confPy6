@@ -8,12 +8,13 @@ Description:
 from typing import TypeVar
 
 from PySide6.QtCore import Signal
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 
 import confighandler
 #import confighandler.controller.Field as Field
 
-
+from . import resources_rc
 class FieldView(QWidget):
     value_changed = Signal(confighandler.T)
 
@@ -64,6 +65,7 @@ class FieldView(QWidget):
         """Returns a QItem for the QTreeView"""
         item = self.ui_field()
         tree_view_item = QTreeWidgetItem([self.parent_field.field_name, None, self.parent_field.description, self.parent_field.name])
+
         # tree_view_item = QTreeWidgetItem([self.ui_field()])
         self.tree_items.append(tree_view_item)
         # tree_view_item.set

@@ -61,6 +61,7 @@ if __name__ == "__main__":
     #tree.setColumnCount(3)
     tree.setHeaderLabels(confighandler.tree_view_header())
     tree.addTopLevelItem(config.view.ui_tree_widget_item(tree, max_level=1))
+    tree.resizeColumnToContents(0)
     grd.addWidget(tree, 2, 0)
 
     btn_set = QtWidgets.QPushButton("Set Wafer Number to 123")

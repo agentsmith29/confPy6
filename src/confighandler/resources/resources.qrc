@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="icons-bw">
+    <file>icons/single-color/cli-settings.svg</file>
+  </qresource>
+</RCC>
