@@ -16,7 +16,7 @@ import confighandler
 class ConfigView(QObject):
     keywords_changed = Signal(dict)
 
-    def __init__(self, parent):
+    def __init__(self, parent: confighandler.ConfigNode):
         super().__init__()
         self.parent = parent
         self.keywords = {}
@@ -32,7 +32,7 @@ class ConfigView(QObject):
 
     def ui_tree_widget_item(self, tree_widget, max_level=1):
         top_item = QtWidgets.QTreeWidgetItem()
-        top_item.setText(0, f"{self.__class__.__name__}")
+        top_item.setText(0, f"{self.parent.name}")
 
         for attr, val in self.parent.fields.items():
             item, le = val.view.ui_tree_widget_item()
@@ -44,7 +44,39 @@ class ConfigView(QObject):
             if val.level <= max_level:
                 top_item.addChild(val.view.ui_tree_widget_item(tree_widget))
 
+        # Create
+        if self.parent.level == 0:
+            top_item.addChild(self._autosave_widget())
+
         return top_item
+
+    def _autosave_widget(self):
+        """
+        Creates a widget for the autosave option.
+        :return:
+        """
+        widget = QtWidgets.QTreeWidgetItem()
+        #layout = QtWidgets.QHBoxLayout()
+        #widget.setLayout(layout)
+
+        #lbl = QLabel("Autosave")
+        #layout.addWidget(lbl)
+
+        cbx = QtWidgets.QCheckBox()
+        #cbx.setChecked(self.parent._autosave)
+        #cbx.stateChanged.connect(self.parent._on_autosave_changed)
+        widget.setText(0, f"Config Settings")
+        widget.addChild(
+         QtWidgets.QTreeWidgetItem(
+                ["File:", str(self.parent.config_file), None, None],
+         )
+        )
+        widget.addChild(
+         QtWidgets.QTreeWidgetItem(
+                ["Autosave:", str(self.parent.autosave_enable), None, None],
+         )
+        )
+        return widget
 
     def _create_config_layout(self, max_level):
         """ Creates a pyside 6 layout based on the fields of the class."""

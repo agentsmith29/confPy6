@@ -7,6 +7,8 @@ from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTreeWidget
 from rich.logging import RichHandler
 
+sys.path.append('../../src')
+import confighandler
 from ApplicationConfig import ApplicationConfig
 
 class TestClass(QObject):
@@ -56,10 +58,8 @@ if __name__ == "__main__":
     #grd.addWidget(config.view.widget(), 1, 0)
 
     tree = QTreeWidget()
-
-
-    tree.setColumnCount(3)
-    tree.setHeaderLabels(["Name", "Type", "asdf"])
+    #tree.setColumnCount(3)
+    tree.setHeaderLabels(confighandler.tree_view_header())
     tree.addTopLevelItem(config.view.ui_tree_widget_item(tree, max_level=1))
     grd.addWidget(tree, 2, 0)
 

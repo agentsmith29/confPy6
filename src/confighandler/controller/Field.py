@@ -17,12 +17,13 @@ from PySide6.QtWidgets import QApplication
 import confighandler
 from confighandler.controller.CObject import CObject
 from confighandler.controller.CSignal import CSignal
-from confighandler.view.FieldView import FieldView
+#from confighandler.view.FieldView import FieldView
 
 
 class FieldData(object):
     def __init__(self, name: str, value, friendly_name: str, description: str):
         self.name = name
+        self._friendly_name = "Not Set or field not registered"
         self.value = [value, friendly_name, description]
 
 
@@ -59,7 +60,7 @@ class Field(Generic[T], CObject):
 
     @abstractmethod
     def create_view(self):
-        return FieldView(self)
+        return confighandler.FieldView(self)
 
     def __new__(cls, value, friendly_name: str = None, description: str = None):
         # print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")

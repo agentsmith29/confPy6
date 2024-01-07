@@ -13,10 +13,11 @@ import pathlib
 
 import yaml
 
+import confighandler
 from .CObject import CObject
 from .CSignal import CSignal
 from .Field import Field
-from ..view.ConfigView import ConfigView
+#from ..view.ConfigView import ConfigView
 
 
 class ConfigNode(CObject):
@@ -29,6 +30,7 @@ class ConfigNode(CObject):
 
         self._autosave = False
         self.name = self.__class__.__name__
+
         self.config_file: pathlib.Path = pathlib.Path(f"./{self.name}.yaml")
 
 
@@ -37,7 +39,7 @@ class ConfigNode(CObject):
         self.owner = None
         self._level = 0
 
-        self.view = ConfigView(self)
+        self.view = confighandler.ConfigView(self)
 
         self.fields = {}
         self.configs = {}
@@ -154,6 +156,11 @@ class ConfigNode(CObject):
     @property
     def level(self):
         return self._level
+
+    @property
+    def autosave_enable(self):
+        return self._autosave
+
 
     # ==================================================================================================================
     # Registering the fields and configs

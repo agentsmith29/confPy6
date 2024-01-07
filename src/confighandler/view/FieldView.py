@@ -5,19 +5,19 @@ Created: 2023-10-19 12:35
 Package Version: 0.0.1
 Description:
 """
-
-
+from typing import TypeVar
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
 
-import confighandler.controller.Field as Field
+import confighandler
+#import confighandler.controller.Field as Field
 
 
 class FieldView(QWidget):
-    value_changed = Signal(Field.T)
+    value_changed = Signal(confighandler.T)
 
-    def __init__(self, parent_field):
+    def __init__(self, parent_field: confighandler.Field):
         super().__init__()
 
         self.parent_field = parent_field
@@ -29,7 +29,7 @@ class FieldView(QWidget):
         self.value_changed.connect(self._on_value_changed)
         #self.setToolTip(parent_field._description)
 
-        if isinstance(Field.T, str):
+        if isinstance(confighandler.T, str):
             print(">>> String")
 
     def _on_value_changed(self, value):
@@ -63,7 +63,7 @@ class FieldView(QWidget):
     def ui_tree_widget_item(self):
         """Returns a QItem for the QTreeView"""
         item = self.ui_field()
-        tree_view_item = QTreeWidgetItem([self.parent_field.name, None, self.parent_field.description])
+        tree_view_item = QTreeWidgetItem([self.parent_field.field_name, None, self.parent_field.description, self.parent_field.name])
         # tree_view_item = QTreeWidgetItem([self.ui_field()])
         self.tree_items.append(tree_view_item)
         # tree_view_item.set
