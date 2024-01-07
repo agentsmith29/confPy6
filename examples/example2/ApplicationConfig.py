@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 
-sys.path.append('../src/')
+sys.path.append('../../src/')
 
 import confighandler as cfg
 from confighandler.controller.SelectableList import SelectableList
@@ -49,8 +49,6 @@ class ApplicationConfig(cfg.ConfigNode):
             friendly_name="wafer_list1",
             description="The version of the wafer")
 
-        # self.laser_config: LaserConfig = LaserConfig(internal_log=internal_log,
-        #                                              internal_log_level=internal_log_level)
-
+        self.laser_config: LaserConfig = LaserConfig()
 
         self.register()

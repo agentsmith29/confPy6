@@ -151,6 +151,9 @@ class ConfigNode(CObject):
                 self.fields[attr] = val
                 val.module_log_enabled = self.module_log_enabled
 
+    @property
+    def level(self):
+        return self._level
 
     # ==================================================================================================================
     # Registering the fields and configs

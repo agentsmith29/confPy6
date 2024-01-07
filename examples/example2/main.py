@@ -41,8 +41,8 @@ if __name__ == "__main__":
     config.module_log_level = logging.DEBUG
     testclass = TestClass()
     time.sleep(1)
-    config.autosave(enable=True, path='./configs_autosave/ApplicationConfig.yaml')
-    (config.load('./configs/ApplicationConfig.yaml', as_auto_save=True))
+    config.autosave(enable=True, path='../configs_autosave/ApplicationConfig.yaml')
+ #   (config.load('./configs/ApplicationConfig.yaml', as_auto_save=True))
     #print(config.wafer_version)
     #config.wafer_version.get()
     #config.wafer_number.get()
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     wdg = QWidget()
     grd = QtWidgets.QGridLayout()
     wdg.setLayout(grd)
-    grd.addWidget(config.view.widget(), 0, 0)
+    grd.addWidget(config.view.widget(max_level=1), 0, 0)
     #grd.addWidget(config.view.widget(), 1, 0)
 
     tree = QTreeWidget()
@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     tree.setColumnCount(3)
     tree.setHeaderLabels(["Name", "Type", "asdf"])
-    tree.addTopLevelItem(config.view.ui_tree_widget_item(tree))
+    tree.addTopLevelItem(config.view.ui_tree_widget_item(tree, max_level=1))
     grd.addWidget(tree, 2, 0)
 
     btn_set = QtWidgets.QPushButton("Set Wafer Number to 123")
