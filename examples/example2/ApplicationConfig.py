@@ -22,7 +22,7 @@ class ApplicationConfig(cfg.ConfigNode):
                                                        friendly_name="wafer_version",
                                                        description="The version of the wafer")
 
-        self.wafer_number: cfg.Field[int] = cfg.Field(1,
+        self.wafer_number: cfg.Field[float] = cfg.Field(0.0,
                                                       friendly_name="wafer_number",
                                                       description="The version of the wafer")
 

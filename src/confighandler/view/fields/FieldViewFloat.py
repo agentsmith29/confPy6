@@ -28,9 +28,9 @@ class FieldViewFloat(FieldView):
             dsp = QtWidgets.QDoubleSpinBox()
         else:
             dsp: QDoubleSpinBox = view
-            dsp.setRange(-100000, 100000)
-            dsp.setValue(self.parent_field.value)
-            dsp.setDecimals(3)
+        dsp.setRange(-100000, 100000)
+        dsp.setValue(self.parent_field.value)
+        dsp.setDecimals(3)
         dsp.setToolTip(f"({self.parent_field.field_name}) {self.parent_field._description}")
         self.ui_edit_fields.append(dsp)
         self.ui_edit_fields[-1].valueChanged.connect(self._on_value_edited)

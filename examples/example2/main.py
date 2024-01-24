@@ -64,8 +64,8 @@ if __name__ == "__main__":
     tree.resizeColumnToContents(0)
     grd.addWidget(tree, 2, 0)
 
-    btn_set = QtWidgets.QPushButton("Set Wafer Number to 123")
-    btn_set.clicked.connect(lambda: config.wafer_nr.set("123"))
+    btn_set = QtWidgets.QPushButton("Set Wafer Number to 23.5")
+    btn_set.clicked.connect(lambda: config.wafer_number.set(23.5))
     grd.addWidget(btn_set, 3, 0)
 
     btn_save = QtWidgets.QPushButton("Save Config")
