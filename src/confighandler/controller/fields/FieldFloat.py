@@ -13,7 +13,7 @@ from confighandler.view.fields.FieldViewFloat import FieldViewFloat
 class FieldFloat(Field):
     def __init__(self, value: float, friendly_name: str = None, description: str = None):
         super().__init__(value, friendly_name, description)
-        self._allowed_types = (int, [float])
+        self._allowed_types = (float, [int])
 
     def create_view(self):
         return FieldViewFloat(self)
