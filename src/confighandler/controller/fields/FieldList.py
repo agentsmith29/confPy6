@@ -21,3 +21,7 @@ class FieldList(Field):
 
     def _yaml_repr(self):
         return str(self.value)
+
+    def __iter__(self):
+        # return str(self.as_dataframe())
+        return list(self.get())

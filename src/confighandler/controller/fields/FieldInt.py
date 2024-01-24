@@ -20,3 +20,7 @@ class FieldInt(Field):
 
     def _yaml_repr(self):
         return int(self.value)
+
+    def __int__(self):
+        # return str(self.as_dataframe())
+        return int(self.get())

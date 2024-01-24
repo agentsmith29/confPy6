@@ -20,3 +20,7 @@ class FieldFloat(Field):
 
     def _yaml_repr(self):
         return float(self.value)
+
+    def __float__(self):
+        # return str(self.as_dataframe())
+        return float(self.get())
