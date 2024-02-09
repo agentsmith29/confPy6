@@ -7,7 +7,7 @@ from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTreeWidget
 from rich.logging import RichHandler
 
-sys.path.append('../../src')
+sys.path.append('../src')
 import confighandler
 from ApplicationConfig import ApplicationConfig
 
