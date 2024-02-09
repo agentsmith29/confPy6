@@ -13,17 +13,17 @@ or
 ```bash
 pip install PySide6 PyYAML rich
 ```
-## Installing this repo to yout project using pip
+## Installing this repo to your project using pip
 Just add the following line to your requirements.txt
 ```bash
-git+https://gitlab.tugraz.at/flexsensor-public/lasercontrol.git@<branch>
+git+https://github.com/agentsmith29/fstools.confighandler.git@<branch>
 # e.g., from branch main
-git+https://gitlab.tugraz.at/flexsensor-public/lasercontrol.git@main
+git+https://github.com/agentsmith29/fstools.confighandler.git@<branch>
 ```
 oder directly using pip (without requirements.txt)
 ```bash
 # or manually
-pip install git+https://gitlab.tugraz.at/flexsensor-public/lasercontrol.git@<branch>
+pip install git+https://github.com/agentsmith29/fstools.confighandler.git@<branch>
 ```
 ## Usage
 Example files can be found in `./examples`.
