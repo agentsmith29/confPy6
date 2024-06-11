@@ -4,7 +4,7 @@ authors:
 - family-names: "Schmidt"
   given-names: "Christoph"
   orcid: "https://orcid.org/0009-0000-6625-3316"
-title: "fstools.confighandler"
+title: "fstools.confighandler - FlexSensor Tools: Configuration File Handler"
 version: 1.2.2
 date-released: 2024-02-09
 url: "https://github.com/agentsmith29/fstools.confighandler"
