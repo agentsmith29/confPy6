@@ -172,3 +172,18 @@ When working insde the exmaples folder, you need to add the confighandler folder
 import sys
 sys.path.append('../src/')
 ```
+
+# Citing 
+If you use this  code, please cite:
+```Schmidt, C. (2024). fstools.confighandler - FlexSensor Tools: Configuration File Handler (Version 1.2.2) [Computer software]. https://github.com/agentsmith29/fstools.confighandler```
+or 
+```bibtex
+@software{Schmidt_fstools_confighandler_-_FlexSensor_2024,
+    author = {Schmidt, Christoph},
+    month = feb,
+    title = {{fstools.confighandler - FlexSensor Tools: Configuration File Handler}},
+    url = {https://github.com/agentsmith29/fstools.confighandler},
+    version = {1.2.2},
+    year = {2024}
+}
+```
