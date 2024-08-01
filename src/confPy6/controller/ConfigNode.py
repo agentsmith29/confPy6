@@ -13,7 +13,7 @@ import pathlib
 
 import yaml
 
-import confighandler
+import confPy6
 from .CObject import CObject
 from .CSignal import CSignal
 from .Field import Field
@@ -39,7 +39,7 @@ class ConfigNode(CObject):
         self.owner = None
         self._level = 0
 
-        self.view = confighandler.ConfigView(self)
+        self.view = confPy6.ConfigView(self)
 
         self.fields = {}
         self.configs = {}

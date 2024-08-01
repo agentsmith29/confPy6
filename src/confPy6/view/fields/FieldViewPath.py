@@ -12,7 +12,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QGridLayout, QFileDialog, QLineEdit
 
-from confighandler.view.FieldView import FieldView
+from confPy6.view.FieldView import FieldView
 
 
 class FieldViewPath(FieldView):

@@ -15,7 +15,7 @@
   <component name="PyNamespacePackagesService">
     <option name="namespacePackageFolders">
       <list>
-        <option value="$MODULE_DIR$/src/confighandler" />
+        <option value="$MODULE_DIR$/src/confPy6" />
       </list>
     </option>
   </component>

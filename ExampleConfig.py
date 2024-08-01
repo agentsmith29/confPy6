@@ -8,7 +8,7 @@ Description:
 import sys
 
 sys.path.append("../src")
-import confighandler as cfg
+import confPy6 as cfg
 
 
 class SecondConfig(cfg.ConfigNode):

@@ -6,8 +6,8 @@ Package Version: 0.0.1
 Description:
 """
 
-from confighandler.controller.Field import Field
-from confighandler.view.fields.FieldViewList import FieldViewList
+from confPy6.controller.Field import Field
+from confPy6.view.fields.FieldViewList import FieldViewList
 
 
 class FieldList(Field):

@@ -1,4 +1,4 @@
-import confighandler as cfg
+import confPy6 as cfg
 
 
 class LaserConfig(cfg.ConfigNode):

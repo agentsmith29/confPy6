@@ -10,8 +10,8 @@ import pathlib
 import re
 from pathlib import Path
 
-from confighandler.controller.Field import Field
-from confighandler.view.fields.FieldViewPath import FieldViewPath
+from confPy6.controller.Field import Field
+from confPy6.view.fields.FieldViewPath import FieldViewPath
 
 
 class FieldPath(Field):

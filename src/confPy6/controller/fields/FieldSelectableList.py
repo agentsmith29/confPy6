@@ -8,7 +8,7 @@ Description:
 import re
 from ast import literal_eval
 
-import confighandler as ch
+import confPy6 as ch
 
 
 class FieldSelectableList(ch.Field):

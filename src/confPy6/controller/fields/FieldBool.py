@@ -6,8 +6,8 @@ Package Version: 0.0.1
 Description:
 """
 
-from confighandler.controller.Field import Field
-from confighandler.view.fields.FieldViewBool import FieldViewBool
+from confPy6.controller.Field import Field
+from confPy6.view.fields.FieldViewBool import FieldViewBool
 
 
 class FieldBool(Field):

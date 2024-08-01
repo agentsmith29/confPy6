@@ -9,7 +9,7 @@ Description:
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QLineEdit, QComboBox
 
-from confighandler.view.FieldView import FieldView
+from confPy6.view.FieldView import FieldView
 
 
 class FieldViewList(FieldView):

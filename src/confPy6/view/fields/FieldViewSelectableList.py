@@ -11,7 +11,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QWidget, QLineEdit, QComboBox, QVBoxLayout, QLabel, QPushButton, QMenu
 
-import confighandler as ch
+import confPy6 as ch
 
 
 class FieldViewAddEntry(QWidget):

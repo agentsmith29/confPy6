@@ -14,10 +14,10 @@ from typing import Generic, T, TypeVar
 
 from PySide6.QtWidgets import QApplication
 
-import confighandler
-from confighandler.controller.CObject import CObject
-from confighandler.controller.CSignal import CSignal
-#from confighandler.view.FieldView import FieldView
+import confPy6
+from confPy6.controller.CObject import CObject
+from confPy6.controller.CSignal import CSignal
+#from confPy6.view.FieldView import FieldView
 
 
 class FieldData(object):
@@ -60,33 +60,33 @@ class Field(Generic[T], CObject):
 
     @abstractmethod
     def create_view(self):
-        return confighandler.FieldView(self)
+        return confPy6.FieldView(self)
 
     def __new__(cls, value, friendly_name: str = None, description: str = None):
         # print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
         if isinstance(value, str):
-            from confighandler.controller.fields.FieldString import FieldString
+            from confPy6.controller.fields.FieldString import FieldString
             return super().__new__(FieldString)
         elif type(value) is int:
-            from confighandler.controller.fields.FieldInt import FieldInt
+            from confPy6.controller.fields.FieldInt import FieldInt
             return super().__new__(FieldInt)
         elif type(value) is float:
-            from confighandler.controller.fields.FieldFloat import FieldFloat
+            from confPy6.controller.fields.FieldFloat import FieldFloat
             return super().__new__(FieldFloat)
         elif type(value) is bool:
-            from confighandler.controller.fields.FieldBool import FieldBool
+            from confPy6.controller.fields.FieldBool import FieldBool
             return super().__new__(FieldBool)
         elif isinstance(value, Path):
-            from confighandler.controller.fields.FieldPath import FieldPath
+            from confPy6.controller.fields.FieldPath import FieldPath
             return super().__new__(FieldPath)
-        elif not isinstance(value, confighandler.SelectableList) and isinstance(value, tuple):
-            from confighandler.controller.fields.FieldTuple import FieldTuple
+        elif not isinstance(value, confPy6.SelectableList) and isinstance(value, tuple):
+            from confPy6.controller.fields.FieldTuple import FieldTuple
             return super().__new__(FieldTuple)
-        elif not isinstance(value, confighandler.SelectableList) and isinstance(value, list):
-            from confighandler.controller.fields.FieldList import FieldList
+        elif not isinstance(value, confPy6.SelectableList) and isinstance(value, list):
+            from confPy6.controller.fields.FieldList import FieldList
             return super().__new__(FieldList)
-        elif isinstance(value, confighandler.SelectableList):
-            from confighandler.controller.fields.FieldSelectableList import FieldSelectableList
+        elif isinstance(value, confPy6.SelectableList):
+            from confPy6.controller.fields.FieldSelectableList import FieldSelectableList
             return super().__new__(FieldSelectableList)
 
     def serialize(self):

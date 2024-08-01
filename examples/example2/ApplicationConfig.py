@@ -6,8 +6,8 @@ from pathlib import Path
 
 sys.path.append('../../src/')
 
-import confighandler as cfg
-from confighandler.controller.SelectableList import SelectableList
+import confPy6 as cfg
+from confPy6.controller.SelectableList import SelectableList
 from LaserConfig import LaserConfig
 
 

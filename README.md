@@ -36,7 +36,7 @@ has three advantages:
 3. When working with this library, you can use the auto completion of your IDE, since it is a class.
 
 ```python
-import confighandler as cfg
+import confPy6 as cfg
 
 
 class SecondConfig(cfg.ConfigNode):

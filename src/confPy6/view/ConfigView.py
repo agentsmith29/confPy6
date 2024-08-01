@@ -11,13 +11,13 @@ from PySide6.QtCore import Signal, QObject
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QLabel
 
-import confighandler
+import confPy6
 
 
 class ConfigView(QObject):
     keywords_changed = Signal(dict)
 
-    def __init__(self, parent: confighandler.ConfigNode):
+    def __init__(self, parent: confPy6.ConfigNode):
         super().__init__()
         self.parent = parent
         self.keywords = {}
@@ -41,7 +41,7 @@ class ConfigView(QObject):
             tree_widget.setItemWidget(item, 1, le)
 
         for attr, val in self.parent.configs.items():
-            val: confighandler.ConfigNode
+            val: confPy6.ConfigNode
             if val.level <= max_level:
                 top_item.addChild(val.view.ui_tree_widget_item(tree_widget))
 
@@ -90,7 +90,7 @@ class ConfigView(QObject):
             row += 1
 
         for attr, val in self.parent.configs.items():
-            val: confighandler.ConfigNode
+            val: confPy6.ConfigNode
             if val.level <= max_level:
                 gbox = QtWidgets.QGroupBox(val.name)
                 gbox.setLayout(val.view._create_config_layout(max_level))

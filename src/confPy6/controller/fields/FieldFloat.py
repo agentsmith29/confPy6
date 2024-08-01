@@ -6,8 +6,8 @@ Package Version: 0.0.1
 Description:
 """
 
-from confighandler.controller.Field import Field
-from confighandler.view.fields.FieldViewFloat import FieldViewFloat
+from confPy6.controller.Field import Field
+from confPy6.view.fields.FieldViewFloat import FieldViewFloat
 
 
 class FieldFloat(Field):

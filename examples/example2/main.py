@@ -15,7 +15,7 @@ src_path = f"{file_path}/../../src"
 print("src_path:", src_path)
 sys.path.append(src_path)
 
-import confighandler
+import confPy6
 from ApplicationConfig import ApplicationConfig
 
 class TestClass(QObject):
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     tree = QTreeWidget()
     #tree.setColumnCount(3)
-    tree.setHeaderLabels(confighandler.tree_view_header())
+    tree.setHeaderLabels(confPy6.tree_view_header())
     tree.addTopLevelItem(config.view.ui_tree_widget_item(tree, max_level=1))
     tree.resizeColumnToContents(0)
     grd.addWidget(tree, 2, 0)
