@@ -1,13 +1,20 @@
 import logging
 import sys
 import time
+import os
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTreeWidget
 from rich.logging import RichHandler
 
-sys.path.append('../src')
+
+# Get the path to the current file
+file_path, _ = os.path.split(os.path.realpath(__file__))
+src_path = f"{file_path}/../../src"
+print("src_path:", src_path)
+sys.path.append(src_path)
+
 import confighandler
 from ApplicationConfig import ApplicationConfig
 
