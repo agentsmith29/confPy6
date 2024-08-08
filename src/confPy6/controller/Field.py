@@ -7,6 +7,7 @@ Description:
 """
 
 import logging
+import os
 import re
 from abc import abstractmethod
 from pathlib import Path
@@ -21,10 +22,11 @@ from confPy6.controller.CSignal import CSignal
 
 
 class FieldData(object):
-    def __init__(self, name: str, value, friendly_name: str, description: str):
+    def __init__(self, name: str, value, friendly_name: str, description: str, env_var: str = None):
         self.name = name
         self._friendly_name = "Not Set or field not registered"
         self.value = [value, friendly_name, description]
+        self.env_var = env_var
 
 
 T = TypeVar('T')
@@ -34,17 +36,19 @@ class Field(Generic[T], CObject):
     changed = CSignal()
 
     def __init__(self, value: T, friendly_name: str = None, description: str = None,
+                 env_var: str = None,
                  module_log=True, module_log_level=logging.WARNING):
         super().__init__(module_log, module_log_level)
 
         self.field_name = self.__class__.__name__
         self.logger = self.create_new_logger(self.name)
 
-        self._data = FieldData(self.field_name, value, friendly_name, description)
+        self._data = FieldData(self.field_name, value, friendly_name, description, env_var)
         self._allowed_types = None
         self._friendly_name: str = friendly_name
         self._description: str = description
         self._value: T = value
+        self._register_or_update_env_var()
 
         self.keywords = {}
 
@@ -58,11 +62,19 @@ class Field(Generic[T], CObject):
 
         self._module_logger.debug(f"Field {self.field_name} created with value {value} of type {type(value)}")
 
+    def _register_or_update_env_var(self):
+        if self._data.env_var is not None:
+            os.environ[self._data.env_var] = str(self.get())
+        # delete the env var if the value is None
+        elif self._data.env_var is None and self.get() is None:
+            if self._data.env_var in os.environ.keys():
+                del os.environ[self._data.env_var]
+
     @abstractmethod
     def create_view(self):
         return confPy6.FieldView(self)
 
-    def __new__(cls, value, friendly_name: str = None, description: str = None):
+    def __new__(cls, value, friendly_name: str = None, description: str = None, env_var: str = None):
         # print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
         if isinstance(value, str):
             from confPy6.controller.fields.FieldString import FieldString
@@ -228,7 +240,7 @@ class Field(Generic[T], CObject):
 
     def set(self, value: T, *args, force_emit: bool = False, **kwargs):
         # typecheck
-        # Check if allowd types are set
+        # Check if allowed types are set
         value = self.check_type(value)
         if not self._value_to_emit == value or force_emit:
             self._module_logger.info(f"{self.field_name} = {value} ({type(value)})")
@@ -248,6 +260,7 @@ class Field(Generic[T], CObject):
     # ==================================================================================================================
     def _set(self, value, *args, **kwargs):
         self._value = value
+        self._register_or_update_env_var()
 
     def _on_value_changed(self, value):
         raise NotImplementedError()

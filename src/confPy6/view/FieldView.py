@@ -9,7 +9,7 @@ from typing import TypeVar
 
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox
+from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QMessageBox, QStyle
 
 import confPy6
 #import confPy6.controller.Field as Field
@@ -65,6 +65,11 @@ class FieldView(QWidget):
         """Returns a QItem for the QTreeView"""
         item = self.ui_field()
         tree_view_item = QTreeWidgetItem([self.parent_field.field_name, None, self.parent_field.description, self.parent_field.name])
+        # add icon
+        if self.parent_field._data.env_var is not None:
+            tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeLow))
+        else:
+            tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.NetworkWired))
 
         # tree_view_item = QTreeWidgetItem([self.ui_field()])
         self.tree_items.append(tree_view_item)

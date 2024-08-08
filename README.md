@@ -28,8 +28,24 @@ pip install git+https://github.com/agentsmith29/fstools.confighandler.git@<branc
 ## Usage
 Example files can be found in `./examples`.
 The usage is straight forward. Just create a new ```ConfigNode``` object and call the show() method.
+## Field Types
+The current implementation supports the following literal field types:
+[FieldBool.py](./src/confPy6/controller/fields/FieldBool.py)
+[FieldFloat.py](./src/confPy6/controller/fields/FieldFloat.py)
+[FieldInt.py](./src/confPy6/controller/fields/FieldInt.py)
+[FieldString.py](./src/confPy6/controller/fields/FieldString.py)
+
+The following list types are also supported:
+[FieldList.py](./src/confPy6/controller/fields/FieldList.py)
+[FieldSelectableList.py](./src/confPy6/controller/fields/FieldSelectableList.py)
+[FieldTuple.py](./src/confPy6/controller/fields/FieldTuple.py)
+
+The object pathlib.Path can also be stored:
+[FieldPath.py](./src/confPy6/controller/fields/FieldPath.py)
+
+Usually the type is automatically detected.
 ### Creating a config
-Before you can start working woith the config, you need to create some kind of sceleton. This
+Before you can start working with the config, you need to create some kind of sceleton. This
 has three advantages:
 1. You can define the type of the fields. You can give them friendly names and descriptions.
 2. The parsing of the config file is much easier, because the parser knows the type of the fields.
@@ -38,20 +54,16 @@ has three advantages:
 ```python
 import confPy6 as cfg
 
-
 class SecondConfig(cfg.ConfigNode):
 
     def __init__(self, enable_log=True) -> None:
         # Call the base class (important!)
         super().__init__(internal_log=enable_log)
 
-        # Some fields
         # Create a field of type int. Set a default value, a friendly name and a description
         self.test_int: cfg.Field[int] = cfg.Field(1,
                                                   friendly_name="My Test Int",
                                                   description="This is just an integer")
-    #
-
 
 class ApplicationConfig(cfg.ConfigNode):
 
@@ -61,13 +73,11 @@ class ApplicationConfig(cfg.ConfigNode):
 
         # Some fields
         # Create a field of type int. Set a default value, a friendly name and a description
-        self.counter: cfg.Field[int] = cfg.Field(1,
-                                                 friendly_name="My Counter",
-                                                 description="This is just an integer")
+        self.counter: cfg.Field[int] = cfg.Field(
+            1, friendly_name="My Counter", description="This is just an integer")
 
-        self.version: cfg.Field[str] = cfg.Field("v1.0",
-                                                 friendly_name="Version",
-                                                 description="The version")
+        self.version: cfg.Field[str] = cfg.Field(
+            "v1.0", friendly_name="Version", description="The version")
 
         # You can also omit the friendly name and description
         self.check: cfg.Field[bool] = cfg.Field(False)
@@ -166,8 +176,27 @@ if __name__ == "__main__":
     window.show()
     sys.exit(app.exec())
 ```
+## Environment Variables
+**confPy6** allows to automatically set environment variables. This can be useful, if you cannot use the already 
+initialized class (e.g. you want to retrieve a variable during an import of a module). See (example4)[./examples/example4.py]
+```python
+class ApplicationConfig(cfg.ConfigNode):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.wafer_list: cfg.Field[int] = cfg.Field(1, env_var="WAFER_LIST")
+        self.wafer_list2: cfg.Field[int] = cfg.Field(2)
+
+        self.register()
+```
+use
+```python
+print(os.environ['WAFER_LIST'])
+```
+to print the environment variable.
 ## Troubleshoting
-When working insde the exmaples folder, you need to add the confighandler folder to the python path.
+When working inside the examples folder, you need to add the 'confPy6' folder to the python path.
 ```python
 import sys
 sys.path.append('../src/')

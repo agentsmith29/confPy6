@@ -11,8 +11,8 @@ from confPy6.view.fields.FieldViewInt import FieldViewInt
 
 
 class FieldInt(Field):
-    def __init__(self, value: int, friendly_name: str = None, description: str = None):
-        super().__init__(value, friendly_name, description)
+    def __init__(self, value: int, friendly_name: str = None, description: str = None, env_var: str = None,):
+        super().__init__(value, friendly_name, description, env_var)
         self._allowed_types = (int, None)
 
     def create_view(self):
