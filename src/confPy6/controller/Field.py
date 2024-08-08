@@ -64,11 +64,17 @@ class Field(Generic[T], CObject):
 
     def _register_or_update_env_var(self):
         if self._data.env_var is not None:
-            os.environ[self._data.env_var] = str(self.get())
+            os.environ[self._data.env_var] = self._env_converter()
         # delete the env var if the value is None
         elif self._data.env_var is None and self.get() is None:
             if self._data.env_var in os.environ.keys():
                 del os.environ[self._data.env_var]
+
+    def _env_converter(self):
+        '''
+            Converter to convert the type to the env variable
+        '''
+        return str(self.get())
 
     @abstractmethod
     def create_view(self):

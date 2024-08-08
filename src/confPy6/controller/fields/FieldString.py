@@ -11,7 +11,7 @@ from confPy6.view.fields.FieldViewString import FieldViewString
 
 
 class FieldString(Field):
-    def __init__(self, value, friendly_name: str = None, description: str = None, env_var: str = None,):
+    def __init__(self, value, friendly_name: str = None, description: str = None, env_var: str = None):
         super().__init__(value, friendly_name, description, env_var)
         self._value_replaced_keywords = self.replace_keywords(self.value)
 

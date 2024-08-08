@@ -11,8 +11,8 @@ from confPy6.view.fields.FieldViewBool import FieldViewBool
 
 
 class FieldBool(Field):
-    def __init__(self, value: bool, friendly_name: str = None, description: str = None):
-        super().__init__(value, friendly_name, description)
+    def __init__(self, value: bool, friendly_name: str = None, description: str = None, env_var: str = None):
+        super().__init__(value, friendly_name, description, env_var)
         self._allowed_types = (bool, [int])
 
     def create_view(self):

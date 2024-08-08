@@ -17,12 +17,15 @@ from confPy6.view.fields.FieldViewPath import FieldViewPath
 class FieldPath(Field):
     # value_changed = Signal(str)
 
-    def __init__(self, value: str, friendly_name: str = None, description: str = None):
-        super().__init__(value, friendly_name, description)
+    def __init__(self, value: str, friendly_name: str = None, description: str = None, env_var: str = None):
+        super().__init__(value, friendly_name, description, env_var)
         self._input = self.value
         self._allowed_types = (Path, [pathlib.PurePosixPath, pathlib.PurePath,
                                       pathlib.PureWindowsPath,
                                       str])
+
+    def _env_converter(self):
+        return str(Path(self.get()).resolve().absolute().as_posix())
 
     def create_view(self):
         return FieldViewPath(self)

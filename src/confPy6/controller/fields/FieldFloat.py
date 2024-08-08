@@ -11,8 +11,8 @@ from confPy6.view.fields.FieldViewFloat import FieldViewFloat
 
 
 class FieldFloat(Field):
-    def __init__(self, value: float, friendly_name: str = None, description: str = None):
-        super().__init__(value, friendly_name, description)
+    def __init__(self, value: float, friendly_name: str = None, description: str = None, env_var: str = None):
+        super().__init__(value, friendly_name, description, env_var)
         self._allowed_types = (float, [int])
 
     def create_view(self):
