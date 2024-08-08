@@ -17,4 +17,4 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/agentsmith29/fstools.confighandler"
+"Homepage" = "https://github.com/agentsmith29/confPy6"
