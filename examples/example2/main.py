@@ -46,7 +46,7 @@ if __name__ == "__main__":
     )
 
     config = ApplicationConfig()
-    config.module_log_enabled = False
+    config.module_log_enabled = True
     config.module_log_level = logging.DEBUG
     testclass = TestClass()
     time.sleep(1)

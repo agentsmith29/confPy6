@@ -65,10 +65,6 @@ class Field(Generic[T], CObject):
     def _register_or_update_env_var(self):
         if self._data.env_var is not None:
             os.environ[self._data.env_var] = self._env_converter()
-        # delete the env var if the value is None
-        elif self._data.env_var is None and self.get() is None:
-            if self._data.env_var in os.environ.keys():
-                del os.environ[self._data.env_var]
 
     def _env_converter(self):
         '''
@@ -158,12 +154,18 @@ class Field(Generic[T], CObject):
         """Set the keywords for the field. Also updates the keywords dict if a value of a field is changed."""
         # self.keywords["{" + self.name + "}"] = self.value
         # self._internal_logger.info(f"Setting keywords for {self.name} to {self.value}")
-        self.keywords[self.field_name] = str(self.value).replace(' ', '_').replace('.', '_').replace(',', '_')
+        self.keywords[f"{self.owner}.{self.field_name}"] = str(self.value).replace(
+            ' ', '_').replace(
+            '.', '_').replace(
+            ',', '_')
+
+
+
         self.csig_field_changed.emit()
 
     def replace_keywords(self, fr: str):
         """Replaces the keywords in the given value with the values of the keywords dict"""
-        # extract all occurencaes of strings between { and }
+        # extract all occurrences of strings between { and }
 
         if isinstance(fr, str):
             m = re.findall('{(.*?)}', fr)
@@ -172,6 +174,7 @@ class Field(Generic[T], CObject):
                     fr = fr.replace('{' + kw + '}', str(self.keywords[kw]))
                     if "{" in fr and "}" in fr:
                         fr = self.replace_keywords(fr)
+            print(self.keywords)
             return fr
         else:
             return fr

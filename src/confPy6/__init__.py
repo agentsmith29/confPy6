@@ -17,5 +17,5 @@ from .view.fields.FieldViewSelectableList import FieldViewSelectableList
 
 # define a tree view header
 def tree_view_header():
-    return ["Name", "Value", "Description", "Type"]
+    return ["Name", "Value", "Description", "Type", "Value (expanded)"]
 

@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     tree = QTreeWidget()
 
-    tree.setColumnCount(3)
+    tree.setColumnCount(4)
     tree.setHeaderLabels(["Name", "Type", "asdf"])
     tree.addTopLevelItem(config.view.ui_tree_widget_item(tree))
     grd.addWidget(tree, 2, 0)

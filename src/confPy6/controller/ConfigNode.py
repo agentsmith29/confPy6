@@ -25,11 +25,14 @@ class ConfigNode(CObject):
 
     cur_time = datetime.datetime.now()
 
-    def __init__(self, module_log=True, module_log_level=logging.WARNING):
+    def __init__(self, module_log=True, module_log_level=logging.WARNING, parent: CObject = None):
         super().__init__(module_log, module_log_level)
+
+
 
         self._autosave = False
         self.name = self.__class__.__name__
+
 
         self.config_file: pathlib.Path = pathlib.Path(f"./{self.name}.yaml")
 
@@ -43,17 +46,28 @@ class ConfigNode(CObject):
 
         self.fields = {}
         self.configs = {}
-        self.keywords = {
-            "date": self.cur_time.strftime("%Y_%m_%d"),
-            "time": self.cur_time.strftime("%H_%M"),
-            "date_time": self.cur_time.strftime("%Y%m%d_%H%M")
-        }
+
+        if parent is None:
+            self.keywords = {
+                "date": self.cur_time.strftime("%Y_%m_%d"),
+                "time": self.cur_time.strftime("%H_%M"),
+                "date_time": self.cur_time.strftime("%Y%m%d_%H%M")
+            }
+            self.logger.debug(f"No keywords given. Using default keywords. Physical address {id(self.keywords)}.")
+        else:
+            self.logger.debug(f"Keywords given. Physical address {id(parent.keywords)}.")
+            self.keywords = parent.keywords
 
         self.field_changed.connect(self._on_field_changed)
 
     # ==================================================================================================================
     #
     # ==================================================================================================================
+    def set_keywords(self, keywords):
+        self.keywords = keywords
+        self.logger.debug(f"Keywords given. Physical address {id(self.keywords)}.")
+        print(self.keywords)
+
     def __set_name__(self, owner, name):
         self.name = name
         self.owner = owner
@@ -166,6 +180,7 @@ class ConfigNode(CObject):
     # Registering the fields and configs
     # ==================================================================================================================
     def register(self):
+        print(f"***** Registering: {self.__class__.__name__} *****")
         self._register_field()
         self._register_config()
 
@@ -186,6 +201,9 @@ class ConfigNode(CObject):
                 self.configs[attr] = val
                 val.__set_name__(self.__class__.__name__, attr)
                 val._level = self._level + 1
+                #val.set_keywords(self.keywords)
+                # add the keywords to the parent keywords
+                #self.keywords = {**self.keywords, **val.keywords}
                 # val.register_keyword(self.keywords, self.keywords_changed)
         # self.keywords_changed.emit(self.keywords)
 

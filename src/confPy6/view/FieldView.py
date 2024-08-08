@@ -26,6 +26,9 @@ class FieldView(QWidget):
         self.label = None
         self.ui_edit_fields = []
         self.tree_items = []
+        self.tree_view_item = QTreeWidgetItem(
+            [self.parent_field.field_name, None, self.parent_field.description, self.parent_field.name,
+             self.parent_field.get()])
 
         self.value_changed.connect(self._on_value_changed)
         #self.setToolTip(parent_field._description)
@@ -39,6 +42,7 @@ class FieldView(QWidget):
         :param value:
         :return:
         """
+        self.tree_view_item.setText(4, str(self.parent_field.get()))
         self._on_value_changed_partial(value)
 
     def _on_value_changed_partial(self, value):
@@ -64,15 +68,18 @@ class FieldView(QWidget):
     def ui_tree_widget_item(self):
         """Returns a QItem for the QTreeView"""
         item = self.ui_field()
-        tree_view_item = QTreeWidgetItem([self.parent_field.field_name, None, self.parent_field.description, self.parent_field.name])
+        #self.tree_view_item = QTreeWidgetItem(
+        #    [self.parent_field.field_name, None, self.parent_field.description, self.parent_field.name,
+        #     self.parent_field.get()])
         # add icon
         if self.parent_field._data.env_var is not None:
-            tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeLow))
+            self.tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeLow))
         else:
-            tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.NetworkWired))
+            self.tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.NetworkWired))
 
         # tree_view_item = QTreeWidgetItem([self.ui_field()])
-        self.tree_items.append(tree_view_item)
+        self.tree_items.append(self.tree_view_item)
+        self.tree_view_item.setText(4, str(self.parent_field.get()))
         # tree_view_item.set
         return self.tree_items[-1], item
 

@@ -16,7 +16,7 @@ class ApplicationConfig(cfg.ConfigNode):
     def __init__(self) -> None:
         super().__init__()
 
-        self.output_directory: cfg.Field[Path] = cfg.Field(Path("C:\\{wafer_list1}"))
+        self.output_directory: cfg.Field[Path] = cfg.Field(Path("C:\\{LaserConfig.port}"))
 
         self.wafer_version: cfg.Field[str] = cfg.Field("v1.0",
                                                        friendly_name="wafer_version",
@@ -30,9 +30,7 @@ class ApplicationConfig(cfg.ConfigNode):
                                                       description="Testcheck")
 
 
-        self.wafer_nr: cfg.Field[str] = cfg.Field("12345ABCD_{wafer_number}",
-                                                  friendly_name="wafer_nr",
-                                                  description="The version of the wafer")
+
 
         self.wafer_number2: cfg.Field[tuple] = cfg.Field((1, 2),
                                                          friendly_name="wafer_number2",
@@ -49,6 +47,6 @@ class ApplicationConfig(cfg.ConfigNode):
             friendly_name="wafer_list1",
             description="The version of the wafer")
 
-        self.laser_config: LaserConfig = LaserConfig()
+        self.laser_config: LaserConfig = LaserConfig(self)
 
         self.register()

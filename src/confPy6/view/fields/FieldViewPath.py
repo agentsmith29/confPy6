@@ -51,6 +51,7 @@ class FieldViewPath(FieldView):
         self.ui_edit_fields.append(le)
 
         self.ui_edit_fields[-1].textEdited.connect(self._on_text_edited)
+        self.ui_edit_fields[-1].editingFinished.connect(lambda: self._on_text_edited_finished(le.text()))
 
         btn_open = QtWidgets.QPushButton("...")
         self.ui_btn_opens.append(btn_open)
@@ -68,7 +69,6 @@ class FieldViewPath(FieldView):
         grd.addWidget(self.ui_edit_fields_lbl[-1], 1, 0, 1, 2)
 
         self.parent_field._module_logger.info(f"Registered QEditField for {self.ui_edit_fields[-1]}")
-
 
         wdg.setLayout(grd)
         self.ui_edit_fields_wdg.append(wdg)
@@ -102,13 +102,18 @@ class FieldViewPath(FieldView):
             else:
                 self.parent_field.set(str(
                     Path(rel_path).as_posix()
-                    )
+                )
                 )
 
     def _on_btn_create_clicked(self, p: QWidget):
         self.parent_field.create_folder()
 
     def _on_text_edited(self, value):
+        #self.parent_field.set(value)
+        pass
+
+    def _on_text_edited_finished(self, value):
+        print(f"Editing finished: Changed to {value}")
         self.parent_field.set(value)
 
     def _on_value_changed_partial(self, value: Path):
@@ -127,6 +132,10 @@ class FieldViewPath(FieldView):
             lbl.setText(
                 str(self.parent_field.get())
             )
+            # Update the QTreeWidgetItem in the TreeView
+
+
+
         # self.parent_field.set(value)
         # for tree_item in self.tree_items:
         #    tree_item.setText(1, value)
