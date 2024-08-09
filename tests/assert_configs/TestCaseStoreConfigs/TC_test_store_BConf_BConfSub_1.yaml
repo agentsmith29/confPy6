@@ -1,0 +1,20 @@
+# - Configuration file stored 2024-08-09 10:02:31.885250 -
+BConf_BConfSub: #!!python/object:controller.BConf_BConfSub
+ field_bool: True # field_bool: None
+ field_float: 0.0 # field_float: None
+ field_int: 0 # field_int: None
+ field_path: "@Path:<.>" # field_path: None
+ field_sel_list: <0>[(6, '6ms'), (7, '7ms'), (8, '8ms')]> # -> 6 # field_sel_list: None
+ field_str: "" # field_str: None
+ field_tuple: (0, 0) # field_tuple: None
+
+# Sub-Configurations
+ sub_conf: #!!python/object:controller.BConfSub
+   sc_field_bool: False # sc_field_bool: None
+   sc_field_float: 29.1 # sc_field_float: None
+   sc_field_int: 5 # sc_field_int: None
+   sc_field_path: "@Path:<..>" # sc_field_path: None
+   sc_field_sel_list: <2>[(1, '1ms'), (2, '2ms'), (3, '3ms')]> # -> 3 # sc_field_sel_list: None
+   sc_field_str: "testing" # sc_field_str: None
+   sc_field_tuple: (13, 5) # sc_field_tuple: None
+

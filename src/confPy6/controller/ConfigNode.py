@@ -12,6 +12,7 @@ import os
 import pathlib
 
 import yaml
+from yaml import SafeLoader
 
 import confPy6
 from .CObject import CObject
@@ -120,7 +121,7 @@ class ConfigNode(CObject):
         for attr, val in content.items():
             # Check if the attribute is not of type GenericConfig
             # therefore get the attribute type of this class
-            # print(f"Parsing {attr} with content: {val}")
+            self._module_logger.debug(f"Parsing line {attr}: {val}")
             if attr == self.name:
                 self.deserialize(val)
             elif attr in self.__dict__:
@@ -131,6 +132,8 @@ class ConfigNode(CObject):
                 else:
                     self._module_logger.info(f"Deserializing config {attr} with content: {val}")
                     getattr(self, attr).deserialize(val)
+
+
 
     @property
     def module_log_level(self):
@@ -180,7 +183,7 @@ class ConfigNode(CObject):
     # Registering the fields and configs
     # ==================================================================================================================
     def register(self):
-        print(f"***** Registering: {self.__class__.__name__} *****")
+        self._module_logger.debug(f"***** Registering: {self.__class__.__name__} *****")
         self._register_field()
         self._register_config()
 
@@ -214,6 +217,10 @@ class ConfigNode(CObject):
         if file is not None:
             self.config_file = pathlib.Path(file)
         # write the string to a file
+
+        # Check if the parent folder exists, otherwise create it
+        self.config_file.parent.mkdir(parents=True, exist_ok=True)
+
         with open(self.config_file, 'w+') as stream:
             stream.write(self.serialize())
 
@@ -238,12 +245,13 @@ class ConfigNode(CObject):
                 # Check if the path exists otherwise create it
 
 
+
     def load(self, file: str, as_auto_save: bool = False):
         # load the yaml file
         _file = pathlib.Path(file)
         self._module_logger.info(f"Loading config from {_file}")
         with open(str(_file.absolute().as_posix()), 'r') as stream:
-            content = yaml.load(stream, Loader=yaml.FullLoader)
+            content = yaml.load(stream, Loader=yaml.SafeLoader)
         self.deserialize(content)
 
         if as_auto_save:
@@ -265,3 +273,11 @@ class ConfigNode(CObject):
             #self._module_logger.debug(f"Autosave to {self.config_file.absolute().as_posix()}")
 
 
+
+# https://stackoverflow.com/questions/13319067/parsing-yaml-return-with-line-number
+class SafeLineLoader(SafeLoader):
+    def construct_mapping(self, node, deep=False):
+        mapping = super(SafeLineLoader, self).construct_mapping(node, deep=deep)
+        # Add 1 so line numbering starts at 1
+        mapping['__line__'] = node.start_mark.line + 1
+        return mapping

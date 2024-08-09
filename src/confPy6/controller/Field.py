@@ -48,9 +48,10 @@ class Field(Generic[T], CObject):
         self._friendly_name: str = friendly_name
         self._description: str = description
         self._value: T = value
+        self.keywords = {}
         self._register_or_update_env_var()
 
-        self.keywords = {}
+
 
         # The view, usd for handling the UI
         if QApplication.instance() is not None:
@@ -154,13 +155,14 @@ class Field(Generic[T], CObject):
         """Set the keywords for the field. Also updates the keywords dict if a value of a field is changed."""
         # self.keywords["{" + self.name + "}"] = self.value
         # self._internal_logger.info(f"Setting keywords for {self.name} to {self.value}")
-        self.keywords[f"{self.owner}.{self.field_name}"] = str(self.value).replace(
-            ' ', '_').replace(
-            '.', '_').replace(
-            ',', '_')
+        # only allow a-z, A-Z, 0-9, and _ in the keyword.
+        # replace every other occurrence
+        val = str(self.value)
+        for idx, c in enumerate(val):
+            if c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_":
+                val = val.replace(c, "_")
 
-
-
+        self.keywords[f"{self.owner}.{self.field_name}"] = val
         self.csig_field_changed.emit()
 
     def replace_keywords(self, fr: str):
@@ -174,7 +176,6 @@ class Field(Generic[T], CObject):
                     fr = fr.replace('{' + kw + '}', str(self.keywords[kw]))
                     if "{" in fr and "}" in fr:
                         fr = self.replace_keywords(fr)
-            print(self.keywords)
             return fr
         else:
             return fr

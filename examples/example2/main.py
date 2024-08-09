@@ -65,7 +65,6 @@ if __name__ == "__main__":
     #grd.addWidget(config.view.widget(), 1, 0)
 
     tree = QTreeWidget()
-    #tree.setColumnCount(3)
     tree.setHeaderLabels(confPy6.tree_view_header())
     tree.addTopLevelItem(config.view.ui_tree_widget_item(tree, max_level=1))
     tree.resizeColumnToContents(0)

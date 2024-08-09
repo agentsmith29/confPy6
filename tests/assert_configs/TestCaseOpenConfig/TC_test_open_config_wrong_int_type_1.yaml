@@ -1,0 +1,9 @@
+# - Configuration file stored 2024-08-09 09:07:16.748567 - 
+BConf: #!!python/object:controller.BasicConfig
+ field_bool: True # field_bool: None
+ field_float: 10.457 # field_float: None
+ field_int: "2" # field_int: None
+ field_path: "@Path:<./testcase1/folder_{BConf.field_int}>" # field_path: None
+ field_sel_list: <0>[(6, '6ms'), (7, '7ms'), (8, '8ms')]> # -> 6 # field_sel_list: None
+ field_str: "test{BConf.field_tuple}" # field_str: None
+ field_tuple: (1, 5) # field_tuple: None
