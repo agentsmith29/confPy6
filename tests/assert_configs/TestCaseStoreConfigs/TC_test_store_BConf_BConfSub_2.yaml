@@ -1,12 +1,12 @@
-# - Configuration file stored 2024-08-09 12:33:30.779612 -
+# - Configuration file stored 2024-08-09 12:33:30.764082 -
 BConf_BConfSub: #!!python/object:controller.BConf_BConfSub
  field_bool: True # field_bool: None
- field_float: 39.434 # field_float: None
- field_int: 34 # field_int: None
- field_path: "@Path:<testfolder_{BConf_BConfSub.field_int}>" # (testfolder_34) field_path: None
+ field_float: 52.6721 # field_float: None
+ field_int: 55 # field_int: None
+ field_path: "@Path:<testfolder_123>" # field_path: None
  field_sel_list: <0>[(6, '6ms'), (7, '7ms'), (8, '8ms')]> # -> 6 # field_sel_list: None
- field_str: "myString{BConf_BConfSub.field_float}" # (myString39_434) field_str: None
- field_tuple: (0, 0) # field_tuple: None
+ field_str: "myString2" # field_str: None
+ field_tuple: (-999999, 1) # field_tuple: None
 
 # Sub-Configurations
  sub_conf: #!!python/object:controller.BConfSub

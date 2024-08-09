@@ -180,15 +180,9 @@ class TestCaseStoreConfigs(unittest.TestCase):
         base_conf.field_str.set("myString_{BConfSub.sc_field_str}")
         self.assertEqual(base_conf.field_str.get(), "myString_testing_123_0")
 
-        #self.assertEqual(a.as_posix(), 'testfolder_29_1')
-
-        # base_conf.field_float.set(39.434)
-        # base_conf.field_str.set('myString{BConf_BConfSub.field_float}')
-        # self.assertEqual(base_conf.field_str.get(), 'myString39_434')
-
         base_conf.save(saved_path)
 
-        #self.yaml_file_comp(original_path, saved_path)
+        self.yaml_file_comp(original_path, saved_path)
 
 
     @classmethod

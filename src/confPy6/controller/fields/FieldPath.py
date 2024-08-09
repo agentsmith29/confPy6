@@ -36,6 +36,14 @@ class FieldPath(Field):
     def get(self) -> pathlib.Path:
         return Path(self.replace_keywords(str(self.value)))
 
+    def serialize(self):
+        """Used for serializing instances. Returns the current field as a yaml-line."""
+        expanded_val = str(self.get())
+        if "{" in self._yaml_repr() and "}" in self._yaml_repr():
+            return f"{self.field_name}: {self._yaml_repr()} # ({expanded_val}) {self.friendly_name}: {self.description}"
+
+        return f"{self.field_name}: {self._yaml_repr()} # {self.friendly_name}: {self.description}"
+
     def _yaml_repr(self):
         return str('"@Path:<' + str(Path(self.value).as_posix()) + '>"')
 

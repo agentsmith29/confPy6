@@ -20,5 +20,13 @@ class FieldString(Field):
     def create_view(self):
         return FieldViewString(self)
 
+    def serialize(self):
+        """Used for serializing instances. Returns the current field as a yaml-line."""
+        expanded_val = str(self.get())
+        if "{" in self._yaml_repr() and "}" in self._yaml_repr():
+            return f"{self.field_name}: {self._yaml_repr()} # ({expanded_val}) {self.friendly_name}: {self.description}"
+
+        return f"{self.field_name}: {self._yaml_repr()} # {self.friendly_name}: {self.description}"
+
     def _yaml_repr(self):
         return f"\"{self.value}\""
