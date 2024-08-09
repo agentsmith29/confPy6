@@ -67,8 +67,6 @@ class FieldView(QWidget, CObject):
     def add_new_view(self, view: QWidget):
         self.ui_field(view)
 
-
-
     def ui_field(self, view: QWidget) -> QWidget:
         """
         Returns a QLineEdit for the UI.
@@ -119,5 +117,3 @@ class FieldView(QWidget, CObject):
         self.msg.setInformativeText("Input is invalid")
         self.msg.setWindowTitle("Error")
         self.msg.show()
-
-
