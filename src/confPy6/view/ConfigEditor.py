@@ -21,6 +21,8 @@ class ConfigEditor(QMainWindow):
         tree.setHeaderLabels(confPy6.tree_view_header())
         tree.addTopLevelItem(config.ui_tree_widget_item(tree, max_level=1))
         tree.resizeColumnToContents(0)
+        # Automatically expand
+        tree.expandToDepth(0)
         grd.addWidget(tree)
 
         keyword_widget = config.keyword_widget()

@@ -92,7 +92,7 @@ class FieldView(QWidget, CObject):
         self.tree_view_item.setText(4, str(self.parent_field.get()))
         # add icon
         if self.parent_field._data.env_var is not None:
-            self.tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeLow))
+            self.tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.NetworkOffline))
         else:
             self.tree_view_item.setIcon(0, QIcon.fromTheme(QIcon.ThemeIcon.NetworkWired))
 
