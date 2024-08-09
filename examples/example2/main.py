@@ -68,15 +68,15 @@ if __name__ == "__main__":
     tree.setHeaderLabels(confPy6.tree_view_header())
     tree.addTopLevelItem(config.view.ui_tree_widget_item(tree, max_level=1))
     tree.resizeColumnToContents(0)
-    grd.addWidget(tree, 2, 0)
+    grd.addWidget(tree, 1, 0)
 
     btn_set = QtWidgets.QPushButton("Set Wafer Number to 23.5")
     btn_set.clicked.connect(lambda: config.wafer_number.set(23.5))
-    grd.addWidget(btn_set, 3, 0)
+    grd.addWidget(btn_set, 2, 0)
 
     btn_save = QtWidgets.QPushButton("Save Config")
     btn_save.clicked.connect(lambda: config.save('./configs/ApplicationConfig.yaml'))
-    grd.addWidget(btn_save, 4, 0)
+    grd.addWidget(btn_save, 3, 0)
 
     # Add a new combo box
     combo = QtWidgets.QComboBox()

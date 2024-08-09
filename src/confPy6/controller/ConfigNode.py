@@ -18,6 +18,8 @@ import confPy6
 from .CObject import CObject
 from .CSignal import CSignal
 from .Field import Field
+
+
 #from ..view.ConfigView import ConfigView
 
 
@@ -29,21 +31,17 @@ class ConfigNode(CObject):
     def __init__(self, module_log=True, module_log_level=logging.WARNING, parent: CObject = None):
         super().__init__(module_log, module_log_level)
 
-
-
         self._autosave = False
         self.name = self.__class__.__name__
 
-
         self.config_file: pathlib.Path = pathlib.Path(f"./{self.name}.yaml")
-
 
         self.logger = self.create_new_logger(self.name)
 
+        self.view = confPy6.ConfigView(self)
+
         self.owner = None
         self._level = 0
-
-        self.view = confPy6.ConfigView(self)
 
         self.fields = {}
         self.configs = {}
@@ -84,6 +82,12 @@ class ConfigNode(CObject):
         # del state['keywords_changed']
 
         return state
+
+    # ==================================================================================================================
+    # UI Operations
+    # ==================================================================================================================
+    def show_config_editor(self):
+        self.view.config_editor.show()
 
     # ==================================================================================================================
     # Serialization  and deserializing of the config
@@ -133,8 +137,6 @@ class ConfigNode(CObject):
                     self._module_logger.info(f"Deserializing config {attr} with content: {val}")
                     getattr(self, attr).deserialize(val)
 
-
-
     @property
     def module_log_level(self):
         return self._module_logger.level
@@ -146,6 +148,7 @@ class ConfigNode(CObject):
             if isinstance(val, Field):
                 self.fields[attr] = val
                 val.module_log_level = self.module_log_level
+
     @property
     def module_log_enabled(self):
         return not self._module_logger.disabled
@@ -178,7 +181,6 @@ class ConfigNode(CObject):
     def autosave_enable(self):
         return self._autosave
 
-
     # ==================================================================================================================
     # Registering the fields and configs
     # ==================================================================================================================
@@ -186,6 +188,7 @@ class ConfigNode(CObject):
         self._module_logger.debug(f"***** Registering: {self.__class__.__name__} *****")
         self._register_field()
         self._register_config()
+        self.view.init_config_editor()
 
     def _register_field(self):
         for attr, val in self.__dict__.items():
@@ -213,7 +216,7 @@ class ConfigNode(CObject):
     # ==================================================================================================================
     # I/O Operations
     # ==================================================================================================================
-    def save(self, file: str=None, background_save=True):
+    def save(self, file: str = None, background_save=True):
         if file is not None:
             self.config_file = pathlib.Path(file)
         # write the string to a file
@@ -226,7 +229,6 @@ class ConfigNode(CObject):
 
         if not background_save:
             self._module_logger.debug(f"Saved config to {file}")
-
 
     def autosave(self, enable: bool = False, path: str = None):
         self._autosave = enable
@@ -243,8 +245,6 @@ class ConfigNode(CObject):
                 self._module_logger.info(
                     f"Autosave enabled. File will be saved to  {self.config_file.absolute().as_posix()}")
                 # Check if the path exists otherwise create it
-
-
 
     def load(self, file: str, as_auto_save: bool = False):
         # load the yaml file
@@ -267,11 +267,9 @@ class ConfigNode(CObject):
             val: Field
             val._on_keyword_changed()
         if self._level == 0 and self._autosave:
-
             # Saves on every field change
             self.save(file=str(self.config_file.as_posix()), background_save=True)
             #self._module_logger.debug(f"Autosave to {self.config_file.absolute().as_posix()}")
-
 
 
 # https://stackoverflow.com/questions/13319067/parsing-yaml-return-with-line-number

@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     btn_config_editor = QPushButton()
     btn_config_editor.setText("Open Config Editor")
-    btn_config_editor.clicked.connect(lambda: config.save())
+    btn_config_editor.clicked.connect(config.show_config_editor)
     grd.addWidget(btn_config_editor, 1, 0)
 
     window.setCentralWidget(wdg)

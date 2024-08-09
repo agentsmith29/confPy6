@@ -12,6 +12,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QLabel
 
 import confPy6
+from confPy6.view.ConfigEditor import ConfigEditor
 
 
 class ConfigView(QObject):
@@ -21,14 +22,28 @@ class ConfigView(QObject):
         super().__init__()
         self.parent = parent
         self.keywords = {}
+        self.config_editor: ConfigEditor = None
 
     # ==================================================================================================================
     # UI handling
     # ==================================================================================================================
+    def init_config_editor(self):
+        self.config_editor = ConfigEditor(self)
     def widget(self, max_level=1):
         self.parent._module_logger.debug("Creating widget for config view.")
         widget = QWidget()
         widget.setLayout(self._create_config_layout(max_level))
+        return widget
+
+    def keyword_widget(self):
+        ''' Table widget with key and value'''
+        widget = QtWidgets.QTableWidget()
+        widget.setColumnCount(2)
+        widget.setHorizontalHeaderLabels(["Keyword", "Value"])
+        widget.setRowCount(len(self.parent.keywords))
+        for i, (key, value) in enumerate(self.parent.keywords.items()):
+            widget.setItem(i, 0, QtWidgets.QTableWidgetItem(key))
+            widget.setItem(i, 1, QtWidgets.QTableWidgetItem(value))
         return widget
 
     def ui_tree_widget_item(self, tree_widget, max_level=1):
