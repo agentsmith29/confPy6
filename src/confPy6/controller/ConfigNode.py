@@ -12,6 +12,7 @@ import os
 import pathlib
 
 import yaml
+from PySide6.QtWidgets import QApplication
 from yaml import SafeLoader
 
 import confPy6
@@ -20,17 +21,13 @@ from .CSignal import CSignal
 from .Field import Field
 
 
-#from ..view.ConfigView import ConfigView
-
-
 class ConfigNode(CObject):
     field_changed = CSignal()
-
     cur_time = datetime.datetime.now()
 
-    def __init__(self, parent: 'ConfigNode' = None, module_log=True, module_log_level=logging.WARNING, ):
-        super().__init__(module_log, module_log_level)
-
+    def __init__(self, parent: 'ConfigNode' = None):
+        super().__init__()
+        self._module_logger.debug(f"Initialization of config class {self.name}.")
         # assert if parent is the same type as this class
         if parent is not None:
             assert isinstance(parent, ConfigNode)
@@ -42,7 +39,7 @@ class ConfigNode(CObject):
 
         self.logger = self.create_new_logger(self.name)
 
-        self.view = confPy6.ConfigView(self)
+        self.view = None
 
         self.owner = None
         self._level = 0
@@ -55,13 +52,14 @@ class ConfigNode(CObject):
                 "time": self.cur_time.strftime("%H_%M"),
                 "date_time": self.cur_time.strftime("%Y%m%d_%H%M")
             }
-            self.logger.debug(f"No keywords given. Using default keywords. Physical address {id(self.keywords)}.")
+            self._module_logger.debug(f"Creating shared keywords dict {id(self.keywords)}.")
         else:
-            self.logger.debug(f"Keywords given. Physical address {id(parent.keywords)}.")
+            self._module_logger.debug(f"Reusing keywords dict {id(parent.keywords)}.")
             self.keywords = parent.keywords
 
         self.field_changed.connect(self._on_field_changed)
-        self.logger.debug(f"Class {self.name} initialized.")
+        self._module_logger.info(f"Class {self.name} initialized.")
+
     # ==================================================================================================================
     #
     # ==================================================================================================================
@@ -90,6 +88,7 @@ class ConfigNode(CObject):
     # UI Operations
     # ==================================================================================================================
     def show_config_editor(self):
+        self.view.init_config_editor()
         self.view.config_editor.show()
 
     # ==================================================================================================================
@@ -188,10 +187,33 @@ class ConfigNode(CObject):
     # Registering the fields and configs
     # ==================================================================================================================
     def register(self):
-        self._module_logger.debug(f"***** Registering: {self.__class__.__name__} *****")
+        self._module_logger.debug(f"Registering members of: {self.__class__.__name__} ")
+
         self._register_field()
         self._register_config()
-        #self.view.init_config_editor()
+
+        if QApplication.instance() is not None:
+            self.view = confPy6.ConfigView(self)
+            self.view.keywords_changed.emit(self.keywords)
+        else:
+            self.view = None
+
+
+        self._module_logger.debug(" Constructed config: \n" + self._print_recursive_tree())
+        self._module_logger.info("All fields registered.")
+
+    def _print_recursive_tree(self):
+
+        # Depending on self.level, add intentations
+        top_int = " ".join([" " for i in range(self._level + 1)])
+        bot_int = " ".join([" " for i in range(self._level + 2)])
+        str_concat = f"{top_int}*{self.__class__.__name__}*\n"
+        for f in self.fields:
+            str_concat += f"{bot_int}> {f} ({type(self.fields[f]).__name__}): {self.fields[f].get()}\n"
+        for c in self.configs:
+            str_concat += self.configs[c]._print_recursive_tree()
+
+        return str_concat
 
     def _register_field(self):
         for attr, val in self.__dict__.items():
@@ -202,7 +224,6 @@ class ConfigNode(CObject):
                 val.register(self.__class__.__name__, attr, self.keywords, self.field_changed)
                 val.module_log_enabled = self.module_log_enabled
                 val.module_log_level = self.module_log_level
-        self.view.keywords_changed.emit(self.keywords)
 
     def _register_config(self):
         for attr, val in self.__dict__.items():
@@ -219,8 +240,12 @@ class ConfigNode(CObject):
     # ==================================================================================================================
     # I/O Operations
     # ==================================================================================================================
-    def save(self, file: str = None, background_save=True):
-        if file is not None:
+    def save(self, file: str = None, background_save=True, use_open_file_dialog=False):
+
+        if use_open_file_dialog:
+            self.config_file = self.view.save_file_dialog(str(self.config_file.parent))
+
+        elif file is not None:
             self.config_file = pathlib.Path(file)
         # write the string to a file
 
@@ -246,7 +271,7 @@ class ConfigNode(CObject):
                 self.config_file.parent.mkdir(parents=True, exist_ok=True)
 
                 self._module_logger.info(
-                    f"Autosave enabled. File will be saved to  {self.config_file.absolute().as_posix()}")
+                    f"Autosave enabled. File will be saved to  {self.config_file.resolve().absolute().as_posix()}")
                 # Check if the path exists otherwise create it
 
     def load(self, file: str, as_auto_save: bool = False):
@@ -266,6 +291,7 @@ class ConfigNode(CObject):
     # ==================================================================================================================
     def _on_field_changed(self, *args, **kwargs):
         # Emit that a field has changed, thus the keywords have changed
+        self._module_logger.debug(f"A Field has changed, thus the keywords have changed.")
         for attr, val in self.fields.items():
             val: Field
             val._on_keyword_changed()

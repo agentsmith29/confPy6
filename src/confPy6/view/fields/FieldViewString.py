@@ -33,11 +33,17 @@ class FieldViewString(FieldView):
         self.ui_edit_fields.append(le)
         self.parent_field._module_logger.debug(f"Registering LineEdit {le}")
         self.ui_edit_fields[-1].textEdited.connect(lambda d: self._on_text_edited(le, d))
+        self.ui_edit_fields[-1].editingFinished.connect(lambda: self._on_text_edited_finished(le, le.text()))
 
         # new
         return le
 
     def _on_text_edited(self, f, value):
+        pass
+        #self.parent_field._module_logger.debug(f"LineEdit {f} changed to {value}.")
+        #self.parent_field.set(value)
+
+    def _on_text_edited_finished(self, f, value):
         self.parent_field._module_logger.debug(f"LineEdit {f} changed to {value}.")
         self.parent_field.set(value)
 

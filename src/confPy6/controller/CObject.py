@@ -10,20 +10,26 @@ import os
 
 from rich.logging import RichHandler
 
+import confPy6
+
 
 class CObject:
 
-    def __init__(self, module_log, module_log_level, name: str = "",):
+    def __init__(self, name: str = ""):
+
         if name is None or name == "":
             self.name = f"{self.__class__.__name__.replace('Field', '')}({hash(self)})"
         else:
             self.name = f"{name}({os.getpid()})"
-        self._module_logger = self.create_new_logger(f"(cfg) {self.name}", module_log, module_log_level)
+        self._module_logger = self.create_new_logger(f"(cfg) {self.name}",
+                                                     confPy6.global_module_log_enabled,
+                                                     confPy6.global_module_log_level)
 
     # ==================================================================================================================
     # Logging
     # ==================================================================================================================
-    def create_new_logger(self, name: str, enable: bool = True, level: int = 0, propagate: bool=True) -> logging.Logger:
+    def create_new_logger(self, name: str, enable: bool = True, level: int = 0,
+                          propagate: bool = True) -> logging.Logger:
         _internal_logger = logging.getLogger(name)
         _internal_logger.handlers = [logging.NullHandler()]
         _internal_logger.setLevel(level)
@@ -44,9 +50,11 @@ class CObject:
         """
         if enable:
             self._module_logger.disabled = False
-            self._module_logger.debug(f"Logger { self._module_logger.name} enabled (Level {self._module_logger.level}).")
+            CObject.global_module_log_enabled = False
+            self._module_logger.debug(f"Logger {self._module_logger.name} enabled (Level {self._module_logger.level}).")
         else:
             self._module_logger.debug(f"Logger {self._module_logger.name} disabled.")
+            CObject.global_module_log_enabled = True
             self._module_logger.disabled = True
 
     @property
@@ -78,4 +86,3 @@ class CObject:
 
         else:
             raise Exception("Can't set internal log level. Internal logger not initialized")
-

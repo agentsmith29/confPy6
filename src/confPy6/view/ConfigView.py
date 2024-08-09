@@ -5,30 +5,35 @@ Created: 2023-10-19 12:35
 Package Version: 0.0.1
 Description:
 """
+import pathlib
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Signal, QObject
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QWidget, QLabel
+from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
 import confPy6
+from confPy6.controller.CObject import CObject
 from confPy6.view.ConfigEditor import ConfigEditor
 
 
-class ConfigView(QObject):
+class ConfigView(QObject, CObject):
     keywords_changed = Signal(dict)
 
     def __init__(self, parent: confPy6.ConfigNode):
         super().__init__()
+        CObject.__init__(self, name=f"{parent.__class__.__name__}.{self.__class__.__name__}")
         self.parent = parent
         self.keywords = {}
         self.config_editor: ConfigEditor = None
+        self._module_logger.debug(f"Initialising {self.__class__.__name__} for class {self.parent.__class__.__name__}")
 
     # ==================================================================================================================
     # UI handling
     # ==================================================================================================================
     def init_config_editor(self):
         self.config_editor = ConfigEditor(self)
+
     def widget(self, max_level=1):
         self.parent._module_logger.debug("Creating widget for config view.")
         widget = QWidget()
@@ -113,3 +118,14 @@ class ConfigView(QObject):
                 row += 1
 
         return grd_layout
+
+    def save_file_dialog(self, default_path: str):
+        # Create a file save dialog
+        file_name, _ = QFileDialog.getSaveFileName(
+            None,
+            "Save Config File",
+            str(default_path),
+            "Config Files (*.yaml)",
+        )
+
+        return pathlib.Path(file_name)

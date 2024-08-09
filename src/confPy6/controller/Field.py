@@ -38,9 +38,9 @@ class Field(Generic[T], CObject):
     changed = CSignal()
 
     def __init__(self, value: T, friendly_name: str = None, description: str = None,
-                 env_var: str = None,
-                 module_log=True, module_log_level=logging.WARNING):
-        super().__init__(module_log, module_log_level)
+                 env_var: str = None):
+        super().__init__()
+        CObject.__init__(self)
 
         self.field_name = self.__class__.__name__
         self.logger = self.create_new_logger(self.name)
@@ -52,15 +52,12 @@ class Field(Generic[T], CObject):
         self.keywords = {}
         self._register_or_update_env_var()
 
-        # The view, usd for handling the UI
-        if QApplication.instance() is not None:
-            self.view = self.create_view()
-        else:
-            self.view = None
+        self.view = None # Initialized on register_function call
+
         # Connected properties that should bet set if the field changes
         self.props = []
 
-        self._module_logger.debug(f"Field {self.field_name} created with value {value} of type {type(value)}")
+        self._module_logger.debug(f"Field <{self.field_name}> created with value <{value}> of type {type(value)}")
 
     def _register_or_update_env_var(self):
         if self._data.env_var is not None:
@@ -144,8 +141,16 @@ class Field(Generic[T], CObject):
         # self.keywords_changed = keyword_changed
         # self.keywords_changed.connect(self._on_keyword_changed)
         self.set_keywords()
-        self._module_logger.info(f"Field '{self.field_name}' assigned to {self.owner}")
-        self._module_logger.name = f"(cfg) {self.name}.{self.field_name}"
+
+        # The view, usd for handling the UI
+        if QApplication.instance() is not None:
+            self.view = self.create_view()
+        else:
+            self.view = None
+
+        self.name = f"{self.owner}.{self.field_name}"
+        self._module_logger.name = f"(cfg) {self.name}"
+        self._module_logger.info(f"Registered: {self.owner}.{self.field_name} = {self.value}")
 
     # ==================================================================================================================
     # Set the keywords for the field
@@ -162,24 +167,23 @@ class Field(Generic[T], CObject):
             for idx, c in enumerate(val):
                 if c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789":
                     val = val.replace(c, "_")
-
+        self._module_logger.debug(f"Updated keyword '{self.owner}.{self.field_name}' = {val}")
         self.keywords[f"{self.owner}.{self.field_name}"] = val
         self.csig_field_changed.emit()
 
     def replace_keywords(self, fr: str):
         """Replaces the keywords in the given value with the values of the keywords dict"""
         # extract all occurrences of strings between { and }
-
+        orig = fr
         if isinstance(fr, str):
             m = re.findall('{(.*?)}', fr)
-            print(f"Found keywords {m} in {fr}")
             for kw in m:
                 if kw in self.keywords.keys():
                     fr = fr.replace('{' + kw + '}', str(self.keywords[kw]))
-                    print(f"Replaced to keywords <{fr}>")
                     if "{" in fr and "}" in fr:
                         fr = self.replace_keywords(fr)
-
+            if orig != fr:
+                self._module_logger.debug(f"Replaced {orig} with {fr}")
             return fr
         else:
             return fr
@@ -213,6 +217,7 @@ class Field(Generic[T], CObject):
         return self._value
 
     def get(self) -> T:
+        self._module_logger.debug(f"Retrieving field value <{self.value}>")
         return self.replace_keywords(self.value)
 
     def check_type(self, value):
@@ -280,6 +285,7 @@ class Field(Generic[T], CObject):
         raise NotImplementedError()
 
     def _on_keyword_changed(self):
+        self._module_logger.debug(f"Keywords have changed.... ")
         self.set(self._value_to_emit)
         if self.view is not None:
             self.view.value_changed.emit(self._value_to_emit)

@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 
@@ -19,3 +20,6 @@ from .view.fields.FieldViewSelectableList import FieldViewSelectableList
 def tree_view_header():
     return ["Name", "Value", "Description", "Type", "Value (expanded)"]
 
+
+global_module_log_level = logging.WARNING
+global_module_log_enabled = True

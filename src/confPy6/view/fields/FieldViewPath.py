@@ -12,10 +12,11 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QGridLayout, QFileDialog, QLineEdit
 
+from confPy6.controller.CObject import CObject
 from confPy6.view.FieldView import FieldView
 
 
-class FieldViewPath(FieldView):
+class FieldViewPath(FieldView, CObject):
     value_changed = Signal(str)
 
     def __init__(self, parent_field: 'FieldPath'):
@@ -68,7 +69,7 @@ class FieldViewPath(FieldView):
         grd.addWidget(btn_create, 0, 2)
         grd.addWidget(self.ui_edit_fields_lbl[-1], 1, 0, 1, 2)
 
-        self.parent_field._module_logger.info(f"Registered QEditField for {self.ui_edit_fields[-1]}")
+        self._module_logger.debug(f"Registered QEditField for {self.ui_edit_fields[-1]}")
 
         wdg.setLayout(grd)
         self.ui_edit_fields_wdg.append(wdg)
@@ -113,14 +114,15 @@ class FieldViewPath(FieldView):
         pass
 
     def _on_text_edited_finished(self, value):
-        print(f"Editing finished: Changed to {value}")
+        #print(f"Editing finished: Changed to {value}")
         self.parent_field.set(value)
 
     def _on_value_changed_partial(self, value: Path):
         # print(value)
         # Check if path exists
+        val = self.parent_field.get()
         for edit, lbl, btn_open in zip(self.ui_edit_fields, self.ui_edit_fields_lbl, self.ui_btn_creates):
-            if not Path(self.parent_field.get()).exists():
+            if not Path(val).exists():
                 edit.setStyleSheet("border: 1px solid red")
                 btn_open.setEnabled(True)
             else:
@@ -130,7 +132,7 @@ class FieldViewPath(FieldView):
                 str(self.parent_field.value)
             )
             lbl.setText(
-                str(self.parent_field.get())
+                str(val)
             )
             # Update the QTreeWidgetItem in the TreeView
 

@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 
 
-
 sys.path.append('../../src/')
 
 import confPy6 as cfg
@@ -15,7 +14,6 @@ class ApplicationConfig(cfg.ConfigNode):
 
     def __init__(self) -> None:
         super().__init__()
-
         self.output_directory: cfg.Field[Path] = cfg.Field(Path("C:\\{LaserConfig.port}"))
 
         self.wafer_version: cfg.Field[str] = cfg.Field("v1.0",

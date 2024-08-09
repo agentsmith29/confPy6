@@ -15,11 +15,15 @@ import confPy6
 #import confPy6.controller.Field as Field
 
 from . import resources_rc
-class FieldView(QWidget):
+from ..controller.CObject import CObject
+
+
+class FieldView(QWidget, CObject):
     value_changed = Signal(confPy6.T)
 
     def __init__(self, parent_field: confPy6.Field):
         super().__init__()
+        CObject.__init__(self, f"{parent_field.owner}.{parent_field.field_name}.{self.__class__.__name__}")
 
         self.parent_field = parent_field
 
@@ -39,7 +43,6 @@ class FieldView(QWidget):
         )
 
         self.value_changed.connect(self._on_value_changed)
-        #self.setToolTip(parent_field._description)
 
         if isinstance(confPy6.T, str):
             print(">>> String")

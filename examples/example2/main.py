@@ -6,15 +6,15 @@ import os
 from PySide6 import QtWidgets
 from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTreeWidget
+from rich import console
 from rich.logging import RichHandler
+
 
 
 # Get the path to the current file
 file_path, _ = os.path.split(os.path.realpath(__file__))
 src_path = f"{file_path}/../../src"
-print("src_path:", src_path)
 sys.path.append(src_path)
-
 import confPy6
 from ApplicationConfig import ApplicationConfig
 
@@ -42,20 +42,14 @@ if __name__ == "__main__":
     # setup the logging module
     FORMAT = "%(name)s %(message)s"
     logging.basicConfig(
-        level=logging.DEBUG, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+        level=logging.DEBUG, format=FORMAT, datefmt="[%X]", handlers=[logging.StreamHandler()]
     )
 
+    confPy6.global_module_log_enabled = True
+    confPy6.global_module_log_level = logging.INFO
     config = ApplicationConfig()
-    config.module_log_enabled = True
-    config.module_log_level = logging.DEBUG
-    testclass = TestClass()
-    time.sleep(1)
+
     config.autosave(enable=True, path='../configs_autosave/ApplicationConfig.yaml')
- #   (config.load('./configs/ApplicationConfig.yaml', as_auto_save=True))
-    #print(config.wafer_version)
-    #config.wafer_version.get()
-    #config.wafer_number.get()
-    #print(config.wafer_version)
 
     window = QMainWindow()
     wdg = QWidget()
@@ -84,7 +78,7 @@ if __name__ == "__main__":
     config.wafer_list1.view.add_new_view(combo)
 
 
-    config.wafer_list1.connect_property(testclass, TestClass.wafer)
+   # config.wafer_list1.connect_property(testclass, TestClass.wafer)
     
     window.setCentralWidget(wdg)
     #print(config.load('config.yaml'))
