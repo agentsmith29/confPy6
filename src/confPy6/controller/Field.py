@@ -18,6 +18,8 @@ from PySide6.QtWidgets import QApplication
 import confPy6
 from confPy6.controller.CObject import CObject
 from confPy6.controller.CSignal import CSignal
+
+
 #from confPy6.view.FieldView import FieldView
 
 
@@ -42,7 +44,6 @@ class Field(Generic[T], CObject):
 
         self.field_name = self.__class__.__name__
         self.logger = self.create_new_logger(self.name)
-
         self._data = FieldData(self.field_name, value, friendly_name, description, env_var)
         self._allowed_types = None
         self._friendly_name: str = friendly_name
@@ -50,8 +51,6 @@ class Field(Generic[T], CObject):
         self._value: T = value
         self.keywords = {}
         self._register_or_update_env_var()
-
-
 
         # The view, usd for handling the UI
         if QApplication.instance() is not None:
@@ -158,9 +157,11 @@ class Field(Generic[T], CObject):
         # only allow a-z, A-Z, 0-9, and _ in the keyword.
         # replace every other occurrence
         val = str(self.value)
-        for idx, c in enumerate(val):
-            if c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_":
-                val = val.replace(c, "_")
+        # Check if in {}
+        if not ("{" in val and "}" in val):
+            for idx, c in enumerate(val):
+                if c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789":
+                    val = val.replace(c, "_")
 
         self.keywords[f"{self.owner}.{self.field_name}"] = val
         self.csig_field_changed.emit()
@@ -171,11 +172,14 @@ class Field(Generic[T], CObject):
 
         if isinstance(fr, str):
             m = re.findall('{(.*?)}', fr)
+            print(f"Found keywords {m} in {fr}")
             for kw in m:
                 if kw in self.keywords.keys():
                     fr = fr.replace('{' + kw + '}', str(self.keywords[kw]))
+                    print(f"Replaced to keywords <{fr}>")
                     if "{" in fr and "}" in fr:
                         fr = self.replace_keywords(fr)
+
             return fr
         else:
             return fr

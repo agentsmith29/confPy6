@@ -1,7 +1,11 @@
+import logging
 import os
 import pathlib
 import unittest
 import shutil
+
+from rich.logging import RichHandler
+
 from tests.BConf import BConf
 from tests.BConf_BConfSub import BConf_BConfSub
 
@@ -95,6 +99,98 @@ class TestCaseStoreConfigs(unittest.TestCase):
 
         self.yaml_file_comp(original_path, saved_path)
 
+    def test_store_BConf_BConfSub_2(self):
+        '''
+        Store a config with a sub config
+        '''
+        base_conf = BConf_BConfSub()
+
+        # Test against File: TC_OpenConfig_test_open_config_2.yaml
+        original_path = f'{TestCaseStoreConfigs.assert_folder}/TC_test_store_BConf_BConfSub_2.yaml'
+        saved_path = f'./{TestCaseStoreConfigs.conf_tmp_folder}/test_store_BConf_BConfSub_2.yaml'
+
+        base_conf.field_bool.set(True)
+        base_conf.field_float.set(52.6721)
+        base_conf.field_int.set(55)
+        base_conf.field_path.set(pathlib.Path('./testfolder_123'))
+        base_conf.field_sel_list.set(0)
+        base_conf.field_str.set("myString2")
+        base_conf.field_tuple.set((-999999, 1))
+        base_conf.save(saved_path)
+
+        self.yaml_file_comp(original_path, saved_path)
+
+    def test_store_BConf_BConfSub_3(self):
+        '''
+        Store a config with a sub config
+        '''
+        base_conf = BConf_BConfSub()
+
+        # Test against File: TC_OpenConfig_test_open_config_2.yaml
+        original_path = f'{TestCaseStoreConfigs.assert_folder}/TC_test_store_BConf_BConfSub_3.yaml'
+        saved_path = f'./{TestCaseStoreConfigs.conf_tmp_folder}/test_store_BConf_BConfSub_3.yaml'
+
+        base_conf.field_int.set(34)
+        base_conf.field_path.set(pathlib.Path('./testfolder_{BConf_BConfSub.field_int}'))
+        self.assertEqual(base_conf.field_path.get().as_posix(), 'testfolder_34')
+
+        base_conf.field_float.set(39.434)
+        base_conf.field_str.set('myString{BConf_BConfSub.field_float}')
+        self.assertEqual(base_conf.field_str.get(), 'myString39_434')
+
+        base_conf.save(saved_path)
+
+        self.yaml_file_comp(original_path, saved_path)
+
+    def test_store_BConf_BConfSub_4(self):
+        '''
+        Store a config with a sub config
+        '''
+        base_conf = BConf_BConfSub()
+
+        # Test against File: TC_OpenConfig_test_open_config_2.yaml
+        original_path = f'{TestCaseStoreConfigs.assert_folder}/TC_test_store_BConf_BConfSub_4.yaml'
+        saved_path = f'./{TestCaseStoreConfigs.conf_tmp_folder}/test_store_BConf_BConfSub_4.yaml'
+
+        base_conf.sub_conf.sc_field_float.set(29.1)
+        base_conf.field_path.set(pathlib.Path('./testfolder_{BConfSub.sc_field_float}'))
+        a = base_conf.field_path.get()
+        self.assertEqual(a.as_posix(), 'testfolder_29_1')
+
+        #base_conf.field_float.set(39.434)
+        #base_conf.field_str.set('myString{BConf_BConfSub.field_float}')
+        #self.assertEqual(base_conf.field_str.get(), 'myString39_434')
+
+        base_conf.save(saved_path)
+
+        self.yaml_file_comp(original_path, saved_path)
+
+    def test_store_BConf_BConfSub_5(self):
+        '''
+        Store a config with a sub config
+        '''
+        base_conf = BConf_BConfSub()
+
+        # Test against File: TC_OpenConfig_test_open_config_2.yaml
+        original_path = f'{TestCaseStoreConfigs.assert_folder}/TC_test_store_BConf_BConfSub_5.yaml'
+        saved_path = f'./{TestCaseStoreConfigs.conf_tmp_folder}/test_store_BConf_BConfSub_5.yaml'
+
+        base_conf.sub_conf.sc_field_float.set(123)
+        base_conf.sub_conf.sc_field_str.set("testing_{BConfSub.sc_field_float}")
+        base_conf.field_str.set("myString_{BConfSub.sc_field_str}")
+        self.assertEqual(base_conf.field_str.get(), "myString_testing_123_0")
+
+        #self.assertEqual(a.as_posix(), 'testfolder_29_1')
+
+        # base_conf.field_float.set(39.434)
+        # base_conf.field_str.set('myString{BConf_BConfSub.field_float}')
+        # self.assertEqual(base_conf.field_str.get(), 'myString39_434')
+
+        base_conf.save(saved_path)
+
+        #self.yaml_file_comp(original_path, saved_path)
+
+
     @classmethod
     def tearDownClass(cls):
         pass
@@ -102,10 +198,24 @@ class TestCaseStoreConfigs(unittest.TestCase):
 
 
 class TestCaseOpenConfig(unittest.TestCase):
-    assert_folder = './assert_configs/TestCaseOpenConfig'
+    conf_tmp_folder = './.unittests/TestCaseOpenConfig'
+    assert_folder = f'./assert_configs/TestCaseOpenConfig'
+
+
+    @classmethod
+    def setUpClass(cls):
+        FORMAT = "%(name)s %(message)s"
+        logging.basicConfig(
+            level=logging.DEBUG, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+        )
+
 
     def test_open_config_1(self):
+
         config = BConf()
+        #config.module_log_enabled = True
+        #config.module_log_level = logging.DEBUG
+        #print("Until here?")
         config.load(f'{TestCaseOpenConfig.assert_folder}/TC_OpenConfig_test_open_config_1.yaml')
         self.assertEqual(config.field_bool.get(), True)
         self.assertEqual(config.field_float.get(), 10.457)

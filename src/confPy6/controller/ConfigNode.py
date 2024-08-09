@@ -28,8 +28,12 @@ class ConfigNode(CObject):
 
     cur_time = datetime.datetime.now()
 
-    def __init__(self, module_log=True, module_log_level=logging.WARNING, parent: CObject = None):
+    def __init__(self, parent: 'ConfigNode' = None, module_log=True, module_log_level=logging.WARNING, ):
         super().__init__(module_log, module_log_level)
+
+        # assert if parent is the same type as this class
+        if parent is not None:
+            assert isinstance(parent, ConfigNode)
 
         self._autosave = False
         self.name = self.__class__.__name__
@@ -42,7 +46,6 @@ class ConfigNode(CObject):
 
         self.owner = None
         self._level = 0
-
         self.fields = {}
         self.configs = {}
 
@@ -58,7 +61,7 @@ class ConfigNode(CObject):
             self.keywords = parent.keywords
 
         self.field_changed.connect(self._on_field_changed)
-
+        self.logger.debug(f"Class {self.name} initialized.")
     # ==================================================================================================================
     #
     # ==================================================================================================================
@@ -188,7 +191,7 @@ class ConfigNode(CObject):
         self._module_logger.debug(f"***** Registering: {self.__class__.__name__} *****")
         self._register_field()
         self._register_config()
-        self.view.init_config_editor()
+        #self.view.init_config_editor()
 
     def _register_field(self):
         for attr, val in self.__dict__.items():

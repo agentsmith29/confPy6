@@ -32,6 +32,6 @@ class BConf_BConfSub(cfg.ConfigNode):
 
         self.field_tuple: cfg.Field[tuple] = cfg.Field((0, 0))
 
-        self.sub_conf = BConfSub(self)
+        self.sub_conf = BConfSub(parent=self)
 
         self.register()
