@@ -1,4 +1,5 @@
 import os
+import pathlib
 import unittest
 import shutil
 from tests.BConf import BConf
@@ -55,6 +56,31 @@ class TestCaseStoreConfigs(unittest.TestCase):
 
         self.yaml_file_comp(original_path, saved_path)
 
+    def test_store_BConf_2(self):
+        '''
+        Store a config with a sub config
+        '''
+        base_conf = BConf()
+
+        # Test against File: TC_OpenConfig_test_open_config_2.yaml
+        original_path = f'{TestCaseStoreConfigs.assert_folder}/TC_test_store_BConf_2.yaml'
+        saved_path = f'./{TestCaseStoreConfigs.conf_tmp_folder}/test_store_BConf_2.yaml'
+
+        base_conf.field_bool.set(False)
+        base_conf.field_float.set(12.3523)
+        base_conf.field_int.set(2)
+        base_conf.field_path.set(pathlib.Path('./testfolder123'))
+        base_conf.field_sel_list.set(1)
+        base_conf.field_str.set("myString")
+        base_conf.field_tuple.set((-4, 2))
+
+        base_conf.save(saved_path)
+
+        # Check if file has been saved
+        self.assertTrue(os.path.exists(saved_path))
+
+        self.yaml_file_comp(original_path, saved_path)
+
     def test_store_BConf_BConfSub_1(self):
         '''
         Store a config with a sub config
@@ -103,14 +129,10 @@ class TestCaseOpenConfig(unittest.TestCase):
 
     def test_open_config_wrong_int_type_1(self):
         config = BConf()
-        config.load(f'{TestCaseOpenConfig.assert_folder}/TC_test_open_config_wrong_int_type_1.yaml')
-        self.assertEqual(config.field_bool.get(), True)
-        self.assertEqual(config.field_float.get(), 10.457)
-        self.assertEqual(config.field_int.get(), 2)
-        self.assertEqual(str(config.field_path.get().as_posix()), 'testcase1/folder_2')
-        # self.assertEqual(config.field_sel_list.get(), 2)
-        self.assertEqual(config.field_str.get(), 'test_1__5_')
-        self.assertEqual(config.field_tuple.get(), (1, 5))
+        # test if type error is thrown
+        with self.assertRaises(TypeError):
+            config.load(f'{TestCaseOpenConfig.assert_folder}/TC_test_open_config_wrong_int_type_1.yaml')
+
 
 if __name__ == '__main__':
     unittest.main()

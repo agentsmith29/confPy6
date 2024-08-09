@@ -32,31 +32,10 @@ if __name__ == "__main__":
     grd.addWidget(config.view.widget(), 0, 0)
     # grd.addWidget(config.view.widget(), 1, 0)
 
-    tree = QTreeWidget()
-
-    tree.setColumnCount(3)
-    tree.setHeaderLabels(["Name", "Type", "asdf"])
-    tree.addTopLevelItem(config.view.ui_tree_widget_item(tree))
-    grd.addWidget(tree, 2, 0)
-
-    btn_set = QPushButton()
-    btn_set.setText("Save")
-    btn_set.clicked.connect(lambda: config.save())
-    grd.addWidget(btn_set, 3, 0)
-
-    btn_read_env = QPushButton()
-    btn_read_env.clicked.connect(lambda:
-                                 # Read the environment variable
-                                 print(os.environ['WAFER_LIST']) if 'WAFER_LIST' in os.environ else print('WAFER_LIST not set')
-                                 )
-    grd.addWidget(btn_read_env, 4, 0)
-
-    # Add a new combo box
-    combo = QtWidgets.QComboBox()
-    grd.addWidget(combo, 5, 0)
-   # config.wafer_list1.view.add_new_view(combo)
-
-   # config.wafer_list1.connect(test)
+    btn_config_editor = QPushButton()
+    btn_config_editor.setText("Open Config Editor")
+    btn_config_editor.clicked.connect(lambda: config.save())
+    grd.addWidget(btn_config_editor, 1, 0)
 
     window.setCentralWidget(wdg)
     # print(config.load('config.yaml'))
@@ -64,6 +43,3 @@ if __name__ == "__main__":
     window.show()
 
     sys.exit(app.exec())
-    # config.wafer_nr = "1234"
-
-    # config.save("test.yaml")
