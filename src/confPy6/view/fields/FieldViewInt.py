@@ -38,6 +38,11 @@ class FieldViewInt(FieldView):
 
         return self.ui_edit_fields[-1]
 
+     def set_range(self, min, max):
+        for uif in  self.ui_edit_fields:
+            uif.setRange(min, max)
+            uif.setValue(self.parent_field.value)
+            
     def _on_value_edited(self, value):
         self.parent_field.set(int(value))
 
