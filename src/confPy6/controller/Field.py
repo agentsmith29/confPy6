@@ -38,7 +38,7 @@ class Field(Generic[T], CObject):
     changed = CSignal()
 
     def __init__(self, value: T, friendly_name: str = None, description: str = None,
-                 env_var: str = None):
+                 env_var: str = None, *args, **kwargs):
         super().__init__()
         CObject.__init__(self)
 
@@ -73,7 +73,8 @@ class Field(Generic[T], CObject):
     def create_view(self):
         return confPy6.FieldView(self)
 
-    def __new__(cls, value, friendly_name: str = None, description: str = None, env_var: str = None):
+    def __new__(cls, value, friendly_name: str = None, description: str = None, env_var: str = None,
+                *args, **kwargs):
         # print(f"Field {cls.__name__} created with value {value} of type {type(value)} -> {isinstance(value, int)}")
         if isinstance(value, str):
             from confPy6.controller.fields.FieldString import FieldString

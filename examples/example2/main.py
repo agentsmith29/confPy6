@@ -49,6 +49,7 @@ if __name__ == "__main__":
     confPy6.global_module_log_level = logging.INFO
     config = ApplicationConfig()
 
+
     config.autosave(enable=True, path='../configs_autosave/ApplicationConfig.yaml')
 
     window = QMainWindow()

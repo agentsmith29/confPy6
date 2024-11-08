@@ -31,18 +31,13 @@ class FieldViewInt(FieldView):
         else:
             dsp: QSpinBox = view
         dsp.setToolTip(f"({self.parent_field.field_name}) {self.parent_field._description}")
-        dsp.setRange(-100000, 100000)
+        dsp.setRange(self.parent_field._range[0], self.parent_field._range[1])
         dsp.setValue(self.parent_field.value)
         self.ui_edit_fields.append(dsp)
         self.ui_edit_fields[-1].valueChanged.connect(self._on_value_edited)
 
         return self.ui_edit_fields[-1]
 
-     def set_range(self, min, max):
-        for uif in  self.ui_edit_fields:
-            uif.setRange(min, max)
-            uif.setValue(self.parent_field.value)
-            
     def _on_value_edited(self, value):
         self.parent_field.set(int(value))
 
